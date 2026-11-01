@@ -1,4 +1,23 @@
-# Planet Sweepers — Phase 8
+# Planet Sweepers — Phase 9
+
+## Phase 9: lunar world look
+
+Run `rojo serve`, connect Studio, Stop the previous session, wait for sync, then Play. Allow terrain generation to finish before checking the world. Moonlet now has deterministic chunked Terrain hills, rim craters, a pale lavender surface, black enclosure, procedural stars, Earth-like sphere, glowing sun, light post-processing, and yellow guide lines. Interaction space remains flat; the old ground Part remains an invisible collision safety floor. Other planet art remains Phase 16 work.
+
+New art uses named colors from `Palette.lua` and builders in shared/art. Existing Phase 1–8 model/UI colors will migrate with their scheduled art phases; this phase does not claim a repo-wide palette conversion. Assets.lua contains empty override slots. MeshId uses a SpecialMesh; TextureId is applied to the mesh or a decal fallback. ModelId names a manually imported Model under ReplicatedStorage.CustomAssets, not an automatic Toolbox download. Imported model scripts are stripped. Models retain their authored scale and pivot. SoundId creates a configured Sound slot; playback is owned by later audio controllers. Empty entries require no assets. Terrain is procedural rather than a swappable model.
+
+Terrain writes are confined to the Moonlet radius, from Y=60 upward, and do not call Terrain:Clear. Use a dedicated test place: existing user terrain within that footprint is overwritten during Play. Stop discards runtime-generated changes. Art generation is idempotent within a server. A fixed seed controls stars/craters/noise. Each four terrain columns yields to the scheduler. Decorative Parts use Decor collision group and disable touch/query/collision. Lighting is shared across this place for now; existing custom Lighting effects may stack and should be reviewed manually in the test place.
+
+Verify in Studio:
+1. Moonlet has lavender ground, a black sky, visible hills/craters, blue/green planet, and warm sun.
+2. Walk all directions; check dirt remains accessible above Terrain and no guide lines are buried. Roblox voxel smoothing may need tuning after visual QA.
+3. Test spawn, reset, cleaning, selling, shop, and portals. Check planet 2/3 gameplay remains functional.
+4. Stop/Play twice: no duplicated art or permanent edit-time Terrain changes.
+5. Check phone emulator for brightness, shadows, frame rate, and sky visibility. This build has not undergone visual/runtime QA.
+
+Streaming: keep Workspace.StreamingEnabled off for initial sky verification. For mobile production, enable it in Studio, then test far sky objects and streamed dirt; the current large sky enclosure is not marked persistent and may disappear under streaming. A client-local/persistent sky and streaming-aware interaction pass are required before enabling it for release. Do not claim streaming readiness from a successful build alone.
+
+Limitations: procedural spheres approximate continents, not textured Earth. Dirt/pebbles/clean patches, astronaut, tools, stations, pets, UI skin, and other planet art remain their scheduled phases. Mesh/model overrides need actual imported assets and size/budget QA. No external assets load with default configuration.
 
 ## Phase 8: monetization hooks (stubs only)
 

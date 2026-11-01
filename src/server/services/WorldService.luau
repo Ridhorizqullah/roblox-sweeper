@@ -5,6 +5,7 @@ local Config = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("config")
 local Cleaning = require(Config:WaitForChild("Cleaning"))
 local Game = require(Config:WaitForChild("Game"))
 local Planets = require(Config:WaitForChild("Planets"))
+local WorldLook = require(ReplicatedStorage.Shared.art.WorldLookBuilder)
 
 local Service = {}
 local world: Folder? = nil
@@ -150,6 +151,11 @@ function Service.Init(): ()
 			table.insert(nodes, node)
 		end
 	end
+end
+
+function Service.ApplyLook(): ()
+	assert(world, "World must exist before art generation")
+	WorldLook.Build(world)
 end
 
 function Service.GetNodes(): {BasePart}

@@ -17,6 +17,7 @@ local characterConnections: {[Player]: RBXScriptConnection} = {}
 DataService.Init()
 PlayerStateService.Init(DataService)
 WorldService.Init()
+WorldService.ApplyLook()
 RewardService.Init()
 PetService.Init()
 CleaningService.Init()
