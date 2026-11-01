@@ -12,6 +12,8 @@ local nodes: {BasePart} = {}
 local sellStation: BasePart? = nil
 local spawnLocation: SpawnLocation? = nil
 local WORLD_NAME = "PlanetSweepersWorld"
+local spawns: {[string]: SpawnLocation} = {}
+local stations: {[string]: BasePart} = {}
 
 local function makePart(name: string, size: Vector3, position: Vector3, color: Color3, parent: Instance): Part
 	local part = Instance.new("Part")
@@ -115,6 +117,39 @@ function Service.Init(): ()
 	nodes = generatedNodes
 	sellStation = station
 	spawnLocation = spawn
+	spawn:SetAttribute("PlanetId", Cleaning.PlanetId)
+	station:SetAttribute("PlanetId", Cleaning.PlanetId)
+	spawns[Cleaning.PlanetId] = spawn
+	stations[Cleaning.PlanetId] = station
+	for index, id in Planets.Order do
+		if id == Cleaning.PlanetId then continue end
+		local definition = Planets.ById[id]
+		local offset = Vector3.new((index - 1) * Game.World.ZoneSpacing, 0, 0)
+		local zone = Instance.new("Folder")
+		zone.Name = id
+		zone.Parent = folder
+		makePart("Ground", Vector3.new(Game.World.ZoneSize, Cleaning.GroundThickness, Game.World.ZoneSize), Cleaning.Origin + offset, definition.groundColor, zone)
+		local destination = spawn:Clone()
+		destination.Name = id .. "Spawn"
+		destination.Position += offset
+		destination:SetAttribute("PlanetId", id)
+		destination.Instructions:Destroy()
+		addLabel(destination, definition.name)
+		destination.Parent = zone
+		spawns[id] = destination
+		local recycler = makePart("SellStation", Cleaning.SellSize, Cleaning.Origin + offset + Cleaning.SellOffset, Cleaning.SellColor, zone)
+		recycler:SetAttribute("PlanetId", id)
+		addLabel(recycler, "SELL DIRT")
+		stations[id] = recycler
+		for nodeId, position in getNodePositions(definition.dirtDensity) do
+			local node = makePart(id .. "_Dirt_" .. nodeId, Cleaning.NodeSize, position + offset, definition.dirtColor, dirtFolder)
+			node.CanCollide = false
+			node.CanTouch = false
+			node:SetAttribute("nodeId", nodeId)
+			node:SetAttribute("PlanetId", id)
+			table.insert(nodes, node)
+		end
+	end
 end
 
 function Service.GetNodes(): {BasePart}
@@ -122,14 +157,14 @@ function Service.GetNodes(): {BasePart}
 	return table.clone(nodes)
 end
 
-function Service.GetSellStation(): BasePart
-	local station = sellStation
+function Service.GetSellStation(id: string?): BasePart
+	local station = stations[id or Cleaning.PlanetId]
 	assert(station, "WorldService.Init must be called before GetSellStation")
 	return station
 end
 
-function Service.GetSpawn(): SpawnLocation
-	local spawn = spawnLocation
+function Service.GetSpawn(id: string?): SpawnLocation
+	local spawn = spawns[id or Cleaning.PlanetId]
 	assert(spawn, "WorldService.Init must be called before GetSpawn")
 	return spawn
 end

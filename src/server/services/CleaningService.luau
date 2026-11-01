@@ -12,7 +12,7 @@ local WorldService = require(script.Parent.WorldService)
 local ToolService = require(script.Parent.ToolService)
 local PetService = require(script.Parent.PetService)
 
-type Node = {part: BasePart, remaining: number, respawnAt: number, prompt: ProximityPrompt}
+type Node = {part: BasePart, planetId: string, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
 local GameConfig = require(config.Game)
 local Service = {}
@@ -21,7 +21,7 @@ local limits: {[Player]: Limits} = {}
 local connections: {RBXScriptConnection} = {}
 local started = false
 local running = false
-local stationPrompt: ProximityPrompt? = nil
+local stationPrompts: {ProximityPrompt} = {}
 
 local function getLimits(player: Player): Limits
 	local existing = limits[player]
@@ -66,7 +66,7 @@ end
 local function clean(player: Player, node: Node)
 	if not accept(player) or node.remaining <= 0 or not node.part:IsDescendantOf(workspace) then return end
 	local data = DataService.Get(player)
-	if not data or not data.unlockedPlanets[Cleaning.PlanetId] or data.currentPlanet ~= Cleaning.PlanetId then return end
+	if not data or not data.unlockedPlanets[node.planetId] or data.currentPlanet ~= node.planetId then return end
 	local tool = Tools.ById[data.equippedTool]
 	if not tool or not data.ownedTools[data.equippedTool] then return end
 	if not ToolService.IsEquipped(player, data.equippedTool) then return end
@@ -79,15 +79,15 @@ local function clean(player: Player, node: Node)
 	entry.cleanAt = now + tool.speed
 	node.remaining -= amount
 	data.bagContents.amount += amount
-	data.bagContents.baseValue += amount * Planets.ById[Cleaning.PlanetId].dirtValue
+	data.bagContents.baseValue += amount * Planets.ById[node.planetId].dirtValue
 	data.totalCleaned += amount
 	node.part:SetAttribute("Remaining", node.remaining)
 	if node.remaining <= 0 then
-		node.respawnAt = now + Planets.ById[Cleaning.PlanetId].respawnSeconds
+		node.respawnAt = now + Planets.ById[node.planetId].respawnSeconds
 		node.prompt.Enabled = false
 		node.part.Transparency = Cleaning.RespawnTransparency
 		node.part.CanQuery = false
-		PetService.Discover(player, Cleaning.PlanetId)
+		PetService.Discover(player, node.planetId)
 	end
 	PlayerStateService.Publish(player)
 end
@@ -95,7 +95,8 @@ end
 local function sell(player: Player, station: BasePart)
 	if not accept(player) then return end
 	local data = DataService.Get(player)
-	if not data or data.currentPlanet ~= Cleaning.PlanetId or not data.unlockedPlanets[Cleaning.PlanetId] then return end
+	local planetId = station:GetAttribute("PlanetId")
+	if not data or data.currentPlanet ~= planetId or not data.unlockedPlanets[planetId] then return end
 	local entry = getLimits(player)
 	local now = os.clock()
 	if now < entry.sellAt or not inRange(player, station, Economy.SellRadius) then return end
@@ -113,7 +114,8 @@ function Service.Destroy(): ()
 	running = false
 	for _, connection in connections do connection:Disconnect() end
 	table.clear(connections)
-	if stationPrompt then stationPrompt:Destroy(); stationPrompt = nil end
+	for _, prompt in stationPrompts do prompt:Destroy() end
+	table.clear(stationPrompts)
 	for _, node in nodes do node.prompt:Destroy() end
 	table.clear(nodes)
 	table.clear(limits)
@@ -123,22 +125,24 @@ function Service.Init(): ()
 	if started then return end
 	started = true
 	running = true
-	local definition = Planets.ById[Cleaning.PlanetId]
 	for _, part in WorldService.GetNodes() do
+		local planetId = part:GetAttribute("PlanetId") :: string
+		local definition = Planets.ById[planetId]
 		local maximumRange = 0
 		for _, tool in Tools.ById do maximumRange = math.max(maximumRange, tool.range) end
 		local prompt = makePrompt(part, "Clean dust", maximumRange)
-		local node: Node = {part = part, remaining = definition.nodeAmount, respawnAt = 0, prompt = prompt}
+		local node: Node = {part = part, planetId = planetId, remaining = definition.nodeAmount, respawnAt = 0, prompt = prompt}
 		part:SetAttribute("Remaining", node.remaining)
 		table.insert(nodes, node)
 		table.insert(connections, prompt.Triggered:Connect(function(player: Player) clean(player, node) end))
 	end
-	local station = WorldService.GetSellStation()
+	for _, id in Planets.Order do
+	local station = WorldService.GetSellStation(id)
 	local sellPrompt = makePrompt(station, "Sell bag", Economy.SellRadius)
-	stationPrompt = sellPrompt
+	table.insert(stationPrompts, sellPrompt)
 	table.insert(connections, sellPrompt.Triggered:Connect(function(player: Player) sell(player, station) end))
+	end
 	table.insert(connections, Players.PlayerRemoving:Connect(function(player: Player) limits[player] = nil end))
-	table.insert(connections, station.Destroying:Connect(Service.Destroy))
 	game:BindToClose(Service.Destroy)
 	task.spawn(function()
 		while running do
@@ -147,7 +151,7 @@ function Service.Init(): ()
 			local now = os.clock()
 			for _, node in nodes do
 				if node.remaining <= 0 and now >= node.respawnAt then
-					node.remaining = definition.nodeAmount
+					node.remaining = Planets.ById[node.planetId].nodeAmount
 					node.part.Transparency = 0
 					node.part.CanQuery = true
 					node.part:SetAttribute("Remaining", node.remaining)

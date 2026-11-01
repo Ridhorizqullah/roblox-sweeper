@@ -9,6 +9,7 @@ local CleaningService = require(script.services.CleaningService)
 local ToolService = require(script.services.ToolService)
 local ShopService = require(script.services.ShopService)
 local PetService = require(script.services.PetService)
+local PlanetService = require(script.services.PlanetService)
 local characterConnections: {[Player]: RBXScriptConnection} = {}
 
 DataService.Init()
@@ -17,11 +18,14 @@ WorldService.Init()
 PetService.Init()
 CleaningService.Init()
 ShopService.Init()
+PlanetService.Init()
 
 local function moveToSpawn(player: Player, character: Model)
 	local root = character:WaitForChild("HumanoidRootPart", Cleaning.SpawnWaitSeconds)
 	if root and player.Parent == Players and player.Character == character and DataService.Get(player) then
-		character:PivotTo(WorldService.GetSpawn().CFrame + Vector3.new(0, Cleaning.SpawnLift, 0))
+		local data = DataService.Get(player)
+		if not data then return end
+		character:PivotTo(WorldService.GetSpawn(data.currentPlanet).CFrame + Vector3.new(0, Cleaning.SpawnLift, 0))
 		ToolService.Refresh(player)
 	end
 end
@@ -31,7 +35,14 @@ local function onPlayerAdded(player: Player)
 	if player.Parent ~= Players then return end
 	PlayerStateService.Publish(player)
 	PetService.Publish(player)
-	player.RespawnLocation = WorldService.GetSpawn()
+	local data = DataService.Get(player)
+	if not data then return end
+	local Planets = require(ReplicatedStorage.Shared.config.Planets)
+	if not Planets.ById[data.currentPlanet] or not data.unlockedPlanets[data.currentPlanet] then
+		data.currentPlanet = Cleaning.PlanetId
+		PlayerStateService.Publish(player)
+	end
+	player.RespawnLocation = WorldService.GetSpawn(data.currentPlanet)
 	if characterConnections[player] then return end
 	characterConnections[player] = player.CharacterAdded:Connect(function(character)
 		task.spawn(moveToSpawn, player, character)

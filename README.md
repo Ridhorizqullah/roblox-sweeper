@@ -1,4 +1,24 @@
-# Planet Sweepers — Phase 4
+# Planet Sweepers — Phase 5
+
+## Phase 5: planets and portals
+
+Keep `rojo serve` running, Stop the old playtest, allow sync, then Play again. The generated world now includes Dusty Moonlet, Crystal Desert, and Neon Swamp, spaced 600 studs apart. Each has its own spawn, recycler, dirt density/value, respawn delay, and pet pool. The shared dirt folder contains 240 pooled nodes. The grid was widened to 11 columns so the configured 100-node swamp fits.
+
+Two glowing portals near each spawn lead to the other planets. Hold the portal prompt to purchase and travel. Crystal Desert costs $1000; Neon Swamp costs $5000 and requires Crystal Desert ownership first. Already-owned destinations are free. Prices remain visible in shared prompts with an owned/free explanation. Server independently checks living character, distance, source planet, prerequisites, cooldown, ownership, and balance. Unlock and deduction do not yield. Reset and rejoin use the saved current planet. Tool/bag shopping remains on Dusty Moonlet; return via its free portal.
+
+Manual checks:
+1. At insufficient funds, use an unlock portal: no money loss or teleport.
+2. Earn $1000, unlock Crystal Desert, and confirm money decreases exactly once. HUD must show Crystal Desert.
+3. Collect 10 desert units: their base sale value is $30 before pet bonuses. Moonlet units retain their original value when carried through a portal.
+4. Return to Moonlet and revisit Desert: travel must be free.
+5. Unlock Neon Swamp for $5000 after Desert. Ten swamp units have $80 base value.
+6. Reset on each planet and confirm the same planet spawn. Test persistent rejoin using the TEST DataStore instructions below.
+7. Verify planet-specific pet species, dirt respawn, and selling at all three recyclers.
+8. Test multiplayer: one player's unlock must not unlock the planet for another player.
+
+For accelerated Studio QA, use the SERVER Command Bar to set the test profile's money to 6000 and publish state, following the existing profile mutation example below. No client currency/debug remote was added.
+
+Limitations: generated flat zones and placeholder portals; no unlock shop tab yet. Rejected portal attempts are silent. Referenced visuals remain future work. Live gameplay, mobile, multiplayer, and DataStore round trips still need human testing. Earlier phase sections below are historical.
 
 ## Phase 4: hidden pets
 

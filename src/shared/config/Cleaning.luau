@@ -9,7 +9,7 @@ return {
 	SellSize = Vector3.new(12, 2, 12),
 	NodeSize = Vector3.new(5, 2, 5),
 	GridSpacing = 18,
-	GridColumns = 9,
+	GridColumns = 11,
 	ReservedRadius = 25,
 	EdgeMargin = 16,
 	RespawnPollSeconds = 0.5,
