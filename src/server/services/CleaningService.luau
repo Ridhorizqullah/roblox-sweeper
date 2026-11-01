@@ -11,6 +11,8 @@ local PlayerStateService = require(script.Parent.PlayerStateService)
 local WorldService = require(script.Parent.WorldService)
 local ToolService = require(script.Parent.ToolService)
 local PetService = require(script.Parent.PetService)
+local CoopService = require(script.Parent.CoopService)
+local Vehicles = require(config.Vehicles)
 
 type Node = {part: BasePart, planetId: string, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
@@ -63,23 +65,20 @@ local function makePrompt(part: BasePart, action: string, distance: number): Pro
 	return prompt
 end
 
-local function clean(player: Player, node: Node)
-	if not accept(player) or node.remaining <= 0 or not node.part:IsDescendantOf(workspace) then return end
+local function collect(player: Player, node: Node, power: number, range: number): boolean
+	if node.remaining <= 0 or not node.part:IsDescendantOf(workspace) then return false end
 	local data = DataService.Get(player)
-	if not data or not data.unlockedPlanets[node.planetId] or data.currentPlanet ~= node.planetId then return end
-	local tool = Tools.ById[data.equippedTool]
-	if not tool or not data.ownedTools[data.equippedTool] then return end
-	if not ToolService.IsEquipped(player, data.equippedTool) then return end
-	local entry = getLimits(player)
+	if not data or not data.unlockedPlanets[node.planetId] or data.currentPlanet ~= node.planetId then return false end
+	if not inRange(player, node.part, range) then return false end
 	local now = os.clock()
-	if now < entry.cleanAt or not inRange(player, node.part, tool.range) then return end
-	local amount = math.min(tool.power, node.remaining, data.bagCapacity - data.bagContents.amount)
-	if amount <= 0 then return end
+	local amount = math.min(power, node.remaining, data.bagCapacity - data.bagContents.amount)
+	if amount <= 0 then return false end
 	-- No yields between checks and mutations: competing prompts cannot double-collect.
-	entry.cleanAt = now + tool.speed
 	node.remaining -= amount
 	data.bagContents.amount += amount
-	data.bagContents.baseValue += amount * Planets.ById[node.planetId].dirtValue
+	local value = amount * Planets.ById[node.planetId].dirtValue
+	data.bagContents.baseValue += value
+	data.bagContents.coopValue += value * CoopService.Bonus(player)
 	data.totalCleaned += amount
 	node.part:SetAttribute("Remaining", node.remaining)
 	if node.remaining <= 0 then
@@ -90,6 +89,36 @@ local function clean(player: Player, node: Node)
 		PetService.Discover(player, node.planetId)
 	end
 	PlayerStateService.Publish(player)
+	return true
+end
+
+local function clean(player: Player, node: Node)
+	if not accept(player) then return end
+	local data = DataService.Get(player)
+	if not data then return end
+	local tool = Tools.ById[data.equippedTool]
+	if not tool or not data.ownedTools[data.equippedTool] or not ToolService.IsEquipped(player, data.equippedTool) then return end
+	local entry = getLimits(player)
+	local now = os.clock()
+	if now < entry.cleanAt then return end
+	if collect(player, node, tool.power, tool.range) then entry.cleanAt = now + tool.speed end
+end
+
+-- Internal server API. RobotService owns each robot's independent timer.
+function Service.RobotClean(player: Player, id: string): boolean
+	local data = DataService.Get(player)
+	local definition = Vehicles.ById[id]
+	if not data or not definition or (data.ownedVehicles[id] or 0) < 1 then return false end
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root or not root:IsA("BasePart") then return false end
+	local nearest: Node? = nil
+	local distance = definition.range
+	for _, node in nodes do
+		if node.remaining <= 0 or node.planetId ~= data.currentPlanet then continue end
+		local candidate = (root.Position - node.part.Position).Magnitude
+		if candidate <= distance then distance = candidate; nearest = node end
+	end
+	return if nearest then collect(player, nearest, definition.power, definition.range) else false
 end
 
 local function sell(player: Player, station: BasePart)

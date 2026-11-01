@@ -30,6 +30,7 @@ function Service.Publish(player: Player): ()
 	folder:SetAttribute("BagLevel", if data then data.bagLevel else 0)
 	folder:SetAttribute("EquippedTool", if data then data.equippedTool else "")
 	if data then
+		for id, count in data.ownedVehicles do folder:SetAttribute("Robot_" .. id, count) end
 		for id, owned in data.ownedTools do folder:SetAttribute("Owned_" .. id, owned) end
 	end
 	folder:SetAttribute("BagAmount", if data then data.bagContents.amount else 0)

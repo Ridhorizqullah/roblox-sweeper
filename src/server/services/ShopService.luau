@@ -6,6 +6,7 @@ local Shop = require(config.Shop)
 local Cleaning = require(config.Cleaning)
 local Tools = require(config.Tools)
 local Bags = require(config.Bags)
+local Vehicles = require(config.Vehicles)
 local DataService = require(script.Parent.DataService)
 local State = require(script.Parent.PlayerStateService)
 local ToolService = require(script.Parent.ToolService)
@@ -46,10 +47,10 @@ function Service.Init(): ()
 	prompt.Triggered:Connect(function(player)
 		if allowed(player) and nearby(player) and DataService.Get(player) then remote:FireClient(player, "Open") end
 	end)
-	remote.OnServerEvent:Connect(function(player: Player, action: any, id: any)
+	remote.OnServerEvent:Connect(function(player: Player, action: any, id: any, expectedCount: any)
 		if not allowed(player) then return end
 		if type(action) ~= "string" or type(id) ~= "string" or #id > 40 then return end
-		if action ~= "Tool" and action ~= "Bag" then return end
+		if action ~= "Tool" and action ~= "Bag" and action ~= "Robot" then return end
 		local data = DataService.Get(player)
 		if not data then return end
 		if not nearby(player) then remote:FireClient(player, "Result", "Dekati toko dahulu."); return end
@@ -68,6 +69,17 @@ function Service.Init(): ()
 			end
 			data.equippedTool = id
 			ToolService.Refresh(player)
+		elseif action == "Robot" then
+			local definition = Vehicles.ById[id]
+			if not definition or type(expectedCount) ~= "number" or expectedCount ~= expectedCount or expectedCount < 0 or expectedCount % 1 ~= 0 then return end
+			if definition.price ~= definition.price or definition.price < 0 or definition.price == math.huge then return end
+			local count = data.ownedVehicles[id] or 0
+			if expectedCount ~= count then return end
+			local total = 0
+			for _, amount in data.ownedVehicles do total += amount end
+			if total >= Vehicles.MaximumRobots or data.money < definition.price then return end
+			data.money -= definition.price
+			data.ownedVehicles[id] = count + 1
 		else
 			-- Expected next level prevents duplicate requests from buying twice.
 			if id ~= tostring(data.bagLevel + 1) or data.bagLevel >= Bags.MaximumLevel then return end

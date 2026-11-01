@@ -1,4 +1,23 @@
-# Planet Sweepers — Phase 5
+# Planet Sweepers — Phase 6
+
+## Phase 6: robots and co-op
+
+Keep `rojo serve` connected, Stop, wait for sync, then Play. Scroll down in the blue Moonlet shop to buy Sweep Bot ($250) or Orbit Bot ($1200). Maximum three robots total. Each robot searches near its owner's character on a server timer and fills the owner's existing bag. Sweep Bot collects up to 2 units every 2 seconds within 16 studs; Orbit Bot collects up to 5 every 1.2 seconds within 24 studs. A 0.25-second scheduler quantizes these intervals. Robots stop when the bag is full, no dirt is in range, or the character is dead. They follow across portals and return after respawn/rejoin. No offline cleaning, selling, dismissing, or vehicle driving is included.
+
+Robot requests include expected owned count to prevent duplicated purchases. The server checks type, count, distance, planet, available slots, balance, and cooldown. Robot gameplay uses the same collection transaction, depletion handling, and pet rolls as manual cleaning. Range is measured from the owner; placeholder robot blocks are cosmetic indicators.
+
+Co-op adds 5% per additional living player on the same planet within 60 studs of the owner when dirt is collected, capped at 50%. Nearby players need not be actively cleaning. The extra value is banked in bagContents.coopValue and survives moving away or changing planets. Sell applies pet multipliers to base plus co-op value. Existing bag contents do not retroactively gain a bonus.
+
+Manual checks:
+1. Buy a Sweep Bot and stand near dirt without pressing E. Bag contents must increase on its timer.
+2. Fill the bag. Robot must stop consuming dirt. Sell and verify it resumes.
+3. Buy three total robots. A fourth must be disabled/rejected. Repeated purchase requests must not charge twice for the same expected count.
+4. Reset, teleport, and test persistent rejoin. Robot counts remain; visible robots must not duplicate. Leave the server and confirm owned blocks disappear.
+5. Start two clients, unequip pets, and empty the test player's bag. Collect 20 Moonlet units with the other living player within 60 studs. Expected sale: $21.
+6. Repeat alone or with the other player farther than 60 studs: expected sale $20. Move away before selling the co-op bag: its banked bonus remains.
+7. With 12 players nearby, bonus still caps at 50%. Mixed solo/co-op collections must preserve their separate accrued values.
+
+Limitations: robot blocks move at the batched server tick, not smooth client interpolation. No live co-op percentage label yet. Performance at 16 players, runtime, multiplayer, and persistence need Studio QA. Earlier phase sections are historical.
 
 ## Phase 5: planets and portals
 

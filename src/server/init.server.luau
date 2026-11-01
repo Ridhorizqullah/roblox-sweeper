@@ -10,6 +10,7 @@ local ToolService = require(script.services.ToolService)
 local ShopService = require(script.services.ShopService)
 local PetService = require(script.services.PetService)
 local PlanetService = require(script.services.PlanetService)
+local RobotService = require(script.services.RobotService)
 local characterConnections: {[Player]: RBXScriptConnection} = {}
 
 DataService.Init()
@@ -19,6 +20,7 @@ PetService.Init()
 CleaningService.Init()
 ShopService.Init()
 PlanetService.Init()
+RobotService.Init()
 
 local function moveToSpawn(player: Player, character: Model)
 	local root = character:WaitForChild("HumanoidRootPart", Cleaning.SpawnWaitSeconds)

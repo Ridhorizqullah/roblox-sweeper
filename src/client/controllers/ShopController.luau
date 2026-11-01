@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Tools = require(Shared.config.Tools)
 local Bags = require(Shared.config.Bags)
+local Vehicles = require(Shared.config.Vehicles)
 local Shop = require(Shared.config.Shop)
 local Format = require(Shared.Util.FormatNumber)
 local Controller = {}
@@ -82,9 +83,25 @@ function Controller.Start(): ()
 	table.insert(connections, bag.Activated:Connect(function()
 		if bag.Active then remote:FireServer("Bag", tostring((state:GetAttribute("BagLevel") or 0) + 1)) end
 	end))
+	for index, id in Vehicles.Order do
+		local row = button("Robot_" .. id, #Tools.Order + 1 + index)
+		table.insert(connections, row.Activated:Connect(function()
+			if row.Active then remote:FireServer("Robot", id, state:GetAttribute("Robot_" .. id) or 0) end
+		end))
+	end
 	local function render()
 		local ready = state:GetAttribute("DataReady") == true
 		local money = state:GetAttribute("Money") or 0
+		local robotTotal = 0
+		for _, id in Vehicles.Order do robotTotal += state:GetAttribute("Robot_" .. id) or 0 end
+		for _, id in Vehicles.Order do
+			local definition = Vehicles.ById[id]
+			local row = rows["Robot_" .. id]
+			row.Active = ready and robotTotal < Vehicles.MaximumRobots and money >= definition.price
+			row.AutoButtonColor = row.Active
+			row.BackgroundColor3 = if row.Active then Shop.Color else Color3.fromRGB(60, 65, 75)
+			row.Text = definition.name .. " | $" .. Format.Format(definition.price) .. " | Owned " .. (state:GetAttribute("Robot_" .. id) or 0) .. "\nRobot slots " .. robotTotal .. "/" .. Vehicles.MaximumRobots
+		end
 		local equippedDefinition = Tools.ById[state:GetAttribute("EquippedTool") or "Toothbrush"]
 		local world = workspace:FindFirstChild("PlanetSweepersWorld")
 		local dirt = if world then world:FindFirstChild("DirtNodes") else nil
