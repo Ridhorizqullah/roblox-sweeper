@@ -1,4 +1,26 @@
-# Planet Sweepers — Phase 9
+# Planet Sweepers — Phase 11
+
+## Phase 11: astronaut costume
+
+`CostumeService` applies a server-built `SpaceSuit` independently of data loading. `AstronautBuilder` adds a white chunky shell, spherical helmet, glossy dark visor with a subtle teal light, gray backpack/orange panel, red limb bands, and gray gloves/boots. Standard R15 adds **22 BaseParts**, hard-capped at **24** including imported replacements. Original rig collision and joints remain untouched. Costume geometry is unanchored, massless, welded to individual rig parts, non-colliding/non-touching/non-queryable, and in Decor. Size changes and late appearance loading trigger a debounced rebuild. Accessories (including layered clothing), head face, and original body visuals are hidden; original transparency values are restored on cleanup. Tools are not hidden. Character replacement/removal disconnects listeners; delayed work checks character identity.
+
+R6 gracefully uses its six-part body with additional end-of-limb glove/boot caps (17 added parts); these cannot articulate like R15 hands/feet. Exotic/non-humanoid rigs without Head and Torso/UpperTorso are left unchanged. Overlay parts follow body bounding boxes, not arbitrary custom mesh contours; unusually shaped avatars need human visual QA. Clothing/avatar changes that explicitly rewrite Transparency after appearance completion may require another costume rebuild.
+
+All tuning is in `shared/config/Costume.luau`, all colors use existing Palette entries. `Assets.Costumes.AstronautSuit` replaces the torso shell only, `Helmet` replaces the helmet shell (visor stays procedural), and `Backpack` replaces the pack. MeshId uses SpecialMesh with optional TextureId; Scale optionally sets mesh scale. Mesh assets should be authored to unit bounds and face -Z. Texture-only slots use a front decal. ModelId is the **name of a locally imported Model directly inside ReplicatedStorage.CustomAssets**, never a downloaded ID. Models fit proportionally inside the slot bounding box, centered on their geometry bounds, using local -Z forward. Only BaseParts plus mesh/decal/texture children are copied; scripts, imported joints, emitters and arbitrary descendants are excluded. Every copied part gets its own rig weld. Empty, missing, or over-budget model slots fall back procedurally, with the budget checked before attachment. Import only trusted assets and verify mesh permissions/proportions in Studio; no external asset IDs are configured by default.
+
+`CostumeController` uses a fixed **12-part local dust pool shared across all players**, updated at 0.08-second intervals. Puffs use small fading/growing balls rather than ParticleEmitters because no external particle texture is allowed. Only living, grounded, moving, non-seated characters within 65 studs produce puffs, at most once per 0.3 seconds each. Raycasts locate the floor. Pool reuse bounds allocation under crowds; it can replace a still-visible puff. Helmet/visor geometry hides locally near the first-person camera, restoring LocalTransparencyModifier afterward; this is a timed proximity heuristic, not a custom camera system. Light remains deliberately subtle.
+
+Validation: all **48 Luau sources compile** using luau-compile; Rojo 7.7.1 place build succeeds. Compilation is syntax validation, not Roblox type analysis or runtime/visual QA. No Studio playtest was performed.
+
+Human test steps:
+1. Run `rojo serve`, connect the Studio Rojo plugin, stop any old play session, wait for sync, then Play.
+2. Test standard R15, tall/short/wide avatars, late-loaded hats/hair/layered clothes, and R6. Verify full suit appearance, red bands, gloves/boots, backpack, and unobstructed equipped tools.
+3. Inspect SpaceSuit descendants and PartCount: R15 default 22, R6 default 17, always <=24. All suit parts must be unanchored, Massless, in Decor, with CanCollide/CanTouch/CanQuery false. Walk, jump, sell, clean and use portals to check gameplay remains unchanged.
+4. Reset repeatedly and leave/rejoin with two clients. Check no duplicate SpaceSuit, missing avatar restoration, stale dust or output errors. Resize a body part and reload appearance; ensure the costume refits. Test character destruction/removal.
+5. Zoom into first person and out; helmet must not obstruct the view. Walk then idle/jump/sit: dust should stop when not walking grounded. Check distance culling and the 12-part local cap on phone/tablet/desktop.
+6. In a disposable test place try each override slot, a missing model, a model containing scripts/constraints, and a >24-part model. Verify safe geometry-only copies, fallback and total budget. Asset imports, appearance judgement, mobile checks and multi-client QA remain human responsibilities.
+
+Older phase notes below describe their implementation-time status; Phase 10/11 now supersede their pending dirt/astronaut items.
 
 ## Phase 9: lunar world look
 

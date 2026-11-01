@@ -44,9 +44,9 @@ return {
 
 	-- Player Character
 	Costumes = {
-		AstronautSuit = {MeshId = "", TextureId = ""},
-		Helmet = {MeshId = "", TextureId = ""},
-		Backpack = {MeshId = "", TextureId = ""},
+		AstronautSuit = {MeshId = "", TextureId = "", ModelId = ""},
+		Helmet = {MeshId = "", TextureId = "", ModelId = ""},
+		Backpack = {MeshId = "", TextureId = "", ModelId = ""},
 	},
 
 	-- Outpost Stations & Props
