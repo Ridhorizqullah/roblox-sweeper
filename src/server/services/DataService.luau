@@ -230,6 +230,7 @@ function Service.Load(player: Player): PlayerData?
 	record.busy = false
 	if not ok or not result or result.session.id ~= record.token then
 		invalidate(player, record, "Your data could not be loaded safely. Please rejoin shortly.")
+		if records[player] == record then records[player] = nil end
 		return nil
 	end
 	record.data = result.data
