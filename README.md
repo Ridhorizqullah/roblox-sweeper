@@ -1,4 +1,28 @@
-# Planet Sweepers — Phase 3
+# Planet Sweepers — Phase 4
+
+## Phase 4: hidden pets
+
+Seven screenshots in `REFERENSI ASET` are reserved as visual references for later work. Phase 4 uses generated sphere placeholders.
+
+Stop Play, keep `rojo serve` connected, wait for sync, and Play again. The PETS button opens inventory, equip controls, discovery rates, variants, and the cross-planet species index. Only Dusty Moonlet is playable in this phase.
+
+Each depleted node rolls once for the player performing its final action. Discovery chance is 1.5%. Conditional rarities are Common 60%, Rare 25%, Epic 10%, Legendary 4%, and Mythic 1%. Variants are independent and mutually exclusive: Normal 97.5%, Gold 2%, Rainbow 0.5%. Species are uniform within their planet/rarity pool. UI calculates both conditional and per-node odds from config. Inventory is capped at 200; full inventories receive no drops. Duplicates are allowed. Pets are not automatically equipped.
+
+Equip up to three pets anywhere; no station/distance requirement applies to inventory management. Server checks request cooldown, action, pet ID ownership, duplicates, and slot capacity. All rolls and income calculations are server-owned. Sell multiplier is `1 + sum(rarity.incomeBonus * variant.bonusMultiplier)` across equipped pets at sale time. Bonuses are additive. Fractional money is retained, although the compact HUD floors values below 1000.
+
+Followers are cosmetic client-generated Parts. Each client displays nearby players' equipped pets, culls at 120 studs, and lerps without server per-frame work. Discovery uses a timed reveal banner. Inventory, equipped IDs, and discovered species persist through the existing DataService.
+
+Manual test:
+1. Clear nodes until a pet drops. A banner should appear and the inventory/index should update.
+2. For faster testing ONLY in a separate Studio test place, temporarily set Pets.DiscoveryChance to 1. Stop/Play after changing it. Restore 0.015 before publishing; the UI follows this value automatically.
+3. Equip three owned pets. A fourth must be blocked. Unequip one and equip another.
+4. Sell a bag with and without pets. For a Normal Common pet, 25 base value becomes 26.25.
+5. Reset your character and inspect followers. They must return without duplicates.
+6. Test with two clients. Each sees nearby equipped pets; only the owner sees their full inventory.
+7. Test persistent rejoin with UseStudioDataStore enabled in the TEST experience as documented below. Verify pet IDs, equipped pets, and index remain intact.
+8. Verify phone scrolling and close/open controls, rarity percentages, variant percentages, and undiscovered question marks.
+
+Limitations: no pet base housing, custom referenced models, deletion/trading, or detailed particle reveal. Inventory UI rebuilds on inventory changes, not every frame. Runtime, DataStore integration, multiplayer visuals, and mobile behavior require Studio QA. Earlier phase sections are historical.
 
 ## Phase 3: tools and shop
 

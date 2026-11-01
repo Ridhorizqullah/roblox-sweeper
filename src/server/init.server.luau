@@ -8,11 +8,13 @@ local WorldService = require(script.services.WorldService)
 local CleaningService = require(script.services.CleaningService)
 local ToolService = require(script.services.ToolService)
 local ShopService = require(script.services.ShopService)
+local PetService = require(script.services.PetService)
 local characterConnections: {[Player]: RBXScriptConnection} = {}
 
 DataService.Init()
 PlayerStateService.Init(DataService)
 WorldService.Init()
+PetService.Init()
 CleaningService.Init()
 ShopService.Init()
 
@@ -28,6 +30,7 @@ local function onPlayerAdded(player: Player)
 	if not DataService.Load(player) then return end
 	if player.Parent ~= Players then return end
 	PlayerStateService.Publish(player)
+	PetService.Publish(player)
 	player.RespawnLocation = WorldService.GetSpawn()
 	if characterConnections[player] then return end
 	characterConnections[player] = player.CharacterAdded:Connect(function(character)

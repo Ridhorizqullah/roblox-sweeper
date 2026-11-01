@@ -10,6 +10,7 @@ local DataService = require(script.Parent.DataService)
 local PlayerStateService = require(script.Parent.PlayerStateService)
 local WorldService = require(script.Parent.WorldService)
 local ToolService = require(script.Parent.ToolService)
+local PetService = require(script.Parent.PetService)
 
 type Node = {part: BasePart, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
@@ -86,6 +87,7 @@ local function clean(player: Player, node: Node)
 		node.prompt.Enabled = false
 		node.part.Transparency = Cleaning.RespawnTransparency
 		node.part.CanQuery = false
+		PetService.Discover(player, Cleaning.PlanetId)
 	end
 	PlayerStateService.Publish(player)
 end
@@ -98,7 +100,7 @@ local function sell(player: Player, station: BasePart)
 	local now = os.clock()
 	if now < entry.sellAt or not inRange(player, station, Economy.SellRadius) then return end
 	if data.bagContents.amount <= 0 then return end
-	local value = data.bagContents.baseValue + data.bagContents.coopValue
+	local value = (data.bagContents.baseValue + data.bagContents.coopValue) * PetService.Multiplier(data)
 	if value ~= value or value < 0 or value == math.huge then return end
 	if data.money + value == math.huge then return end
 	entry.sellAt = now + Cleaning.SellCooldown

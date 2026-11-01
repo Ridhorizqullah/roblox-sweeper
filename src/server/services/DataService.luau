@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("config"):WaitForChild("Data"))
 local Types = require(Shared:WaitForChild("Types"))
+local PetConfig = require(Shared.config.Pets)
 type PlayerData = Types.PlayerData
 
 type Record = {
@@ -99,7 +100,20 @@ local function decode(raw: any): PlayerData?
 	end
 	if not stringMap(data.ownedVehicles, "number") then return nil end
 	if not array(data.equippedPets, function(item) return type(item) == "string" end) then return nil end
-	if not array(data.pets, function(item) return type(item) == "table" and serializable(item, 0) end) then return nil end
+	if not array(data.pets, function(item)
+		return type(item) == "table" and type(item.id) == "string" and type(item.species) == "string"
+			and PetConfig.Rarities[item.rarity] ~= nil and PetConfig.Variants[item.variant] ~= nil
+	end) then return nil end
+	local petIds: {[string]: boolean} = {}
+	for _, pet in data.pets do
+		if petIds[pet.id] then return nil end
+		petIds[pet.id] = true
+	end
+	local equippedIds: {[string]: boolean} = {}
+	for _, id in data.equippedPets do
+		if not petIds[id] or equippedIds[id] then return nil end
+		equippedIds[id] = true
+	end
 	return data :: PlayerData
 end
 

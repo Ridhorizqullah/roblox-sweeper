@@ -4,6 +4,9 @@ return {
 	DiscoveryChance = 0.015,
 	EquipSlots = 3,
 	MaximumInventory = 200,
+	RequestCooldown = 0.25,
+	VariantOrder = {"Normal", "Gold", "Rainbow"},
+	Visual = {Size = 1.5, Spacing = 2.5, Behind = 4, Height = 0, FollowSpeed = 10, CullDistance = 120, ReconcileSeconds = 0.5, RevealSeconds = 5},
 	RarityOrder = {"Common", "Rare", "Epic", "Legendary", "Mythic"},
 	Rarities = {
 		Common = {weight = 60, incomeBonus = 0.05},
