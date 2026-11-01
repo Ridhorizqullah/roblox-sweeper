@@ -1,4 +1,4 @@
 --!strict
--- TODO Phase 8: replace IDs only after creating passes in Creator Dashboard.
--- These values do not grant benefits in Phase 1.
+-- TODO LIVE: create passes in Creator Dashboard and supply real IDs.
+-- Phase 8 is stub-only. Enabled=true does not activate purchases or ownership verification.
 return {Enabled = false, DoubleMoneyPassId = 0, BiggerBagPassId = 0, MoneyMultiplier = 2, BagMultiplier = 2}

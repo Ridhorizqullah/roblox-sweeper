@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local DataConfig = require(Shared:WaitForChild("config"):WaitForChild("Data"))
 local Types = require(Shared:WaitForChild("Types"))
+local Monetization = require(script.Parent.MonetizationService)
 type PlayerData = Types.PlayerData
 type DataService = { Get: (Player) -> PlayerData? }
 
@@ -44,7 +45,7 @@ function Service.Publish(player: Player): ()
 		for id, owned in data.ownedTools do folder:SetAttribute("Owned_" .. id, owned) end
 	end
 	folder:SetAttribute("BagAmount", if data then data.bagContents.amount else 0)
-	folder:SetAttribute("BagCapacity", if data then data.bagCapacity else 0)
+	folder:SetAttribute("BagCapacity", if data then Monetization.GetBagCapacity(player, data.bagCapacity) else 0)
 	folder:SetAttribute("Planet", if data then data.currentPlanet else "")
 	folder:SetAttribute("StorageMode", if RunService:IsStudio() and not DataConfig.UseStudioDataStore then "Temporary" else "Persistent")
 	if not existing then

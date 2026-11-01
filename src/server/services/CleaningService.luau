@@ -14,6 +14,7 @@ local PetService = require(script.Parent.PetService)
 local CoopService = require(script.Parent.CoopService)
 local Vehicles = require(config.Vehicles)
 local RewardService = require(script.Parent.RewardService)
+local Monetization = require(script.Parent.MonetizationService)
 
 type Node = {part: BasePart, planetId: string, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
@@ -72,7 +73,7 @@ local function collect(player: Player, node: Node, power: number, range: number)
 	if not data or not data.unlockedPlanets[node.planetId] or data.currentPlanet ~= node.planetId then return false end
 	if not inRange(player, node.part, range) then return false end
 	local now = os.clock()
-	local amount = math.min(power, node.remaining, data.bagCapacity - data.bagContents.amount)
+	local amount = math.min(power, node.remaining, Monetization.GetBagCapacity(player, data.bagCapacity) - data.bagContents.amount)
 	if amount <= 0 then return false end
 	-- No yields between checks and mutations: competing prompts cannot double-collect.
 	node.remaining -= amount
@@ -132,7 +133,7 @@ local function sell(player: Player, station: BasePart)
 	local now = os.clock()
 	if now < entry.sellAt or not inRange(player, station, Economy.SellRadius) then return end
 	if data.bagContents.amount <= 0 then return end
-	local value = (data.bagContents.baseValue + data.bagContents.coopValue) * PetService.Multiplier(data)
+	local value = (data.bagContents.baseValue + data.bagContents.coopValue) * PetService.Multiplier(data) * Monetization.GetMoneyMultiplier(player)
 	if value ~= value or value < 0 or value == math.huge then return end
 	if data.money + value == math.huge then return end
 	entry.sellAt = now + Cleaning.SellCooldown

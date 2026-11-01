@@ -1,4 +1,29 @@
-# Planet Sweepers — Phase 7
+# Planet Sweepers — Phase 8
+
+## Phase 8: monetization hooks (stubs only)
+
+`MonetizationService` exposes GetMoneyMultiplier(player), GetBagCapacity(player, baseCapacity), and RequestPurchase(player, pass). DoubleMoney and BiggerBag are the only accepted purchase keys. Requests return NOT_IMPLEMENTED; unknown keys return INVALID_PASS. No purchase remote, prompt, ownership network call, or real gamepass ID exists in this phase. Config IDs remain 0 and Enabled remains false. Even enabling config cannot activate the intentionally false ownership stub.
+
+The sale calculation now includes the money hook, after co-op and pet bonuses. Daily rewards are not multiplied. Manual and robot collection use effective bag capacity through the same hook; the HUD shows that capacity. Saved bagCapacity remains the permanent upgrade-derived base, preventing repeated multiplier application on rejoin. Buying bag upgrades continues updating only the base.
+
+TODO LIVE markers describe future server-only MarketplaceService ownership checks with pcall/retries, entitlement-cache cleanup, official purchase prompts, post-purchase revalidation, and HUD republishing. Creating gamepasses and supplying actual IDs requires Creator Dashboard work. Merely entering IDs is insufficient: ownership verification is deliberately unimplemented.
+
+Test: run `rojo serve`, Stop the previous playtest, wait for sync, and Play. With no pets/co-op, 25 Moonlet units must still sell for $25. Starting capacity remains 25, first bag upgrade makes it 40, and robots obey the same capacity. Daily reward remains $100. No purchase prompts or MarketplaceService asset/ID errors should appear.
+
+Optional SERVER Command Bar stub checks:
+
+```lua
+local player = game:GetService("Players"):GetPlayers()[1]
+local service = require(game.ServerScriptService.PlanetSweepersServer.services.MonetizationService)
+assert(service.GetMoneyMultiplier(player) == 1)
+assert(service.GetBagCapacity(player, 25) == 25)
+local ok, code = service.RequestPurchase(player, "DoubleMoney")
+assert(not ok and code == "NOT_IMPLEMENTED")
+local valid, errorCode = service.RequestPurchase(player, "Unknown")
+assert(not valid and errorCode == "INVALID_PASS")
+```
+
+This finishes the eight planned implementation phases, not release certification. Persistence failure cases, full multiplayer/mobile QA, performance profiling, economy timing, real audio, referenced visual assets, and live monetization integration remain outstanding. Source files contain full implementations; TODO markers apply only to explicitly requested monetization stubs. Earlier phase sections below are historical.
 
 ## Phase 7: feedback and rewards
 
