@@ -27,6 +27,16 @@ function Service.Publish(player: Player): ()
 	folder.Name = "PlanetSweepersState"
 	folder:SetAttribute("DataReady", false)
 	folder:SetAttribute("Money", if data then data.money else 0)
+	folder:SetAttribute("LastDailyReward", if data then data.lastDailyReward else 0)
+	if data then
+		local stats = player:FindFirstChild("leaderstats")
+		if not stats then stats = Instance.new("Folder"); stats.Name = "leaderstats"; stats.Parent = player end
+		for name, value in {Money = data.money, Cleaned = data.totalCleaned} do
+			local stat = stats:FindFirstChild(name)
+			if not stat then stat = Instance.new("NumberValue"); stat.Name = name; stat.Parent = stats end
+			if stat:IsA("NumberValue") then stat.Value = value end
+		end
+	end
 	folder:SetAttribute("BagLevel", if data then data.bagLevel else 0)
 	folder:SetAttribute("EquippedTool", if data then data.equippedTool else "")
 	if data then

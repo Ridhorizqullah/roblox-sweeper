@@ -13,6 +13,7 @@ local ToolService = require(script.Parent.ToolService)
 local PetService = require(script.Parent.PetService)
 local CoopService = require(script.Parent.CoopService)
 local Vehicles = require(config.Vehicles)
+local RewardService = require(script.Parent.RewardService)
 
 type Node = {part: BasePart, planetId: string, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
@@ -80,6 +81,7 @@ local function collect(player: Player, node: Node, power: number, range: number)
 	data.bagContents.baseValue += value
 	data.bagContents.coopValue += value * CoopService.Bonus(player)
 	data.totalCleaned += amount
+	RewardService.Emit(player, "Clean", node.part.Position)
 	node.part:SetAttribute("Remaining", node.remaining)
 	if node.remaining <= 0 then
 		node.respawnAt = now + Planets.ById[node.planetId].respawnSeconds
@@ -135,6 +137,7 @@ local function sell(player: Player, station: BasePart)
 	if data.money + value == math.huge then return end
 	entry.sellAt = now + Cleaning.SellCooldown
 	data.money += value
+	RewardService.Emit(player, "Sell", value)
 	data.bagContents = {amount = 0, baseValue = 0, coopValue = 0}
 	PlayerStateService.Publish(player)
 end

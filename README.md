@@ -1,4 +1,21 @@
-# Planet Sweepers — Phase 6
+# Planet Sweepers — Phase 7
+
+## Phase 7: feedback and rewards
+
+Keep `rojo serve` connected, Stop, wait for sync, then Play. Cleaning creates a brief client-only expanding glow. Selling shows floating +$ text using the shared formatter. Pet discovery also has a floating reveal. Effects are capped at 24 concurrent instances and expire after 0.8 seconds. Sound placeholders for Clean, Sell, Reward, and Pet have empty IDs and are deliberately silent. Configure owned audio later in shared/config/Feedback; no external assets are loaded by default.
+
+The Roblox player list now shows server-owned Money and Cleaned leaderstats, updated by profile publication. This is a current-server leaderboard, not a global ranking. The daily button below PETS awards $100 once per rolling 24 hours, available immediately to a fresh profile. The server owns time, amount, and eligibility; a rate limit blocks request spam. Claim timestamp and money change together without yielding, followed by a best-effort immediate save. The normal persistence/lease limitations still apply: a failed save can roll back both reward and timestamp together. In temporary Studio mode, Stop/Play resets the daily claim along with the entire profile.
+
+Manual checks:
+1. Clean manually and with robots. Confirm short glow effects and no accumulating Parts under LocalSweeperEffects.
+2. Sell a bag. Confirm floating +$ matches the payout (compact formatting may hide fractional cents).
+3. Open the Roblox player list. Money and Cleaned should track changes for multiple players.
+4. Claim daily once. Money increases by $100 and the button becomes a 24-hour countdown.
+5. Repeated claims must not award extra money. Test persistent leave/rejoin: countdown must remain.
+6. For a separate test profile, set lastDailyReward to os.time() minus Game.DailyReward.CooldownSeconds in the SERVER Command Bar, publish state, and verify eligibility returns.
+7. Test phone layout, pet reveal, reset, and GUI cleanup. Empty sound IDs must not create asset-loading errors.
+
+Validation is build/syntax only until human Studio QA. This phase does not replace placeholder models with the supplied visual references. No global leaderboard, streak system, or real audio is included. Earlier phase notes below are historical.
 
 ## Phase 6: robots and co-op
 

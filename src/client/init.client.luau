@@ -5,3 +5,4 @@ local ShopController = require(script:WaitForChild("controllers"):WaitForChild("
 task.spawn(ShopController.Start)
 task.spawn(require(script.controllers.PetController).Start)
 task.spawn(require(script.controllers.PetFollowController).Start)
+task.spawn(require(script.controllers.FeedbackController).Start)

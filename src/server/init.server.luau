@@ -11,11 +11,13 @@ local ShopService = require(script.services.ShopService)
 local PetService = require(script.services.PetService)
 local PlanetService = require(script.services.PlanetService)
 local RobotService = require(script.services.RobotService)
+local RewardService = require(script.services.RewardService)
 local characterConnections: {[Player]: RBXScriptConnection} = {}
 
 DataService.Init()
 PlayerStateService.Init(DataService)
 WorldService.Init()
+RewardService.Init()
 PetService.Init()
 CleaningService.Init()
 ShopService.Init()
