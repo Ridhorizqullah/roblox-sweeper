@@ -84,19 +84,42 @@ function Controller.Start(): ()
 
 	local sounds: {[string]: Sound} = {}
 	for name, id in Config.Sounds do
-		local sound = Instance.new("Sound")
-		sound.Name = name .. "Placeholder"
-		sound.SoundId = id
-		sound.Volume = Config.SoundVolume
-		sound.Parent = gui
-		sounds[name] = sound
+		local cfg = Config.SoundConfigs and Config.SoundConfigs[name]
+		local soundId = if cfg and cfg.Id ~= "" then cfg.Id else id
+		if soundId and soundId ~= "" then
+			local s = Instance.new("Sound")
+			s.Name = name .. "Effect"
+			s.SoundId = soundId
+			s.Volume = (if cfg and cfg.Volume then cfg.Volume else 0.3) * (Config.SoundVolume or 1)
+			s.Parent = gui
+			sounds[name] = s
+		end
 	end
 
+	local lastSoundTime: {[string]: number} = {}
+
 	local function sound(name: string)
-		local value = sounds[name]
-		if value and value.SoundId ~= "" then
-			SoundService:PlayLocalSound(value)
+		local cfg = Config.SoundConfigs and Config.SoundConfigs[name]
+		local baseSound = sounds[name]
+		if not baseSound then return end
+
+		-- Throttle rapid sound spam (especially when sweeping multiple dirt nodes)
+		local now = os.clock()
+		local lastTime = lastSoundTime[name] or 0
+		local minInterval = if name == "Clean" then 0.08 else 0.05
+		if now - lastTime < minInterval then
+			return
 		end
+		lastSoundTime[name] = now
+
+		local pMin = if cfg and cfg.PitchMin then cfg.PitchMin else 1
+		local pMax = if cfg and cfg.PitchMax then cfg.PitchMax else 1
+		local pitch = if pMin == pMax then pMin else (pMin + math.random() * (pMax - pMin))
+
+		local volume = if cfg and cfg.Volume then cfg.Volume else 0.3
+		baseSound.PlaybackSpeed = pitch
+		baseSound.Volume = volume * (Config.SoundVolume or 1)
+		SoundService:PlayLocalSound(baseSound)
 	end
 
 	local function effect(position: Vector3, text: string?)

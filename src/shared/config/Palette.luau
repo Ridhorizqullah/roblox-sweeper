@@ -3,21 +3,25 @@
 -- Single source of truth for all visual colors inspired by the lunar space sweeper reference art.
 
 return {
-	Earth = Color3.fromRGB(40, 120, 220), EarthLand = Color3.fromRGB(55, 150, 80),
-	Sun = Color3.fromRGB(255, 248, 220), Space = Color3.new(0, 0, 0),
-	Stars = Color3.fromRGB(219, 229, 255), Ambient = Color3.fromRGB(34, 32, 45),
-	OutdoorAmbient = Color3.fromRGB(78, 75, 91), Tint = Color3.fromRGB(239, 235, 255),
+	-- Lighting & Skybox
+	Ambient = Color3.fromRGB(38, 40, 52),
+	OutdoorAmbient = Color3.fromRGB(28, 30, 40),
+	Space = Color3.fromRGB(6, 6, 12),
+	Tint = Color3.fromRGB(245, 246, 255),
+	Stars = Color3.fromRGB(255, 255, 255),
+	Sun = Color3.fromRGB(255, 248, 220),
+
+	-- Celestial bodies
+	Earth = Color3.fromRGB(40, 120, 220),
+	EarthLand = Color3.fromRGB(55, 150, 80),
+	EarthCloud = Color3.fromRGB(245, 245, 255),
+
 	-- World & Environment
 	Ground = Color3.fromRGB(195, 192, 205),          -- Pale gray-lavender lunar regolith
 	GroundClean = Color3.fromRGB(235, 235, 245),     -- Smooth polished ground revealed after cleaning
 	PebbleDark = Color3.fromRGB(120, 118, 130),       -- Coarse regolith pebbles
 	PebbleLight = Color3.fromRGB(160, 158, 170),      -- Fine surface dust pebbles
-	RoadYellow = Color3.fromRGB(250, 205, 50),        -- Yellow painted runway / guidance seam lines
-	SpaceSky = Color3.fromRGB(6, 6, 12),              -- Void of space
-	SunGlow = Color3.fromRGB(255, 248, 220),          -- Distant bright solar glare
-	EarthBlue = Color3.fromRGB(40, 120, 220),         -- Earth ocean
-	EarthGreen = Color3.fromRGB(55, 150, 80),         -- Earth landmass
-	EarthCloud = Color3.fromRGB(240, 245, 255),       -- Earth atmosphere & clouds
+	RoadYellow = Color3.fromRGB(250, 205, 50),        -- Yellow painted guidance seam lines
 
 	-- Sci-Fi Lunar Outpost Architecture (Modular Base, Solar, Tanks)
 	StationWhite = Color3.fromRGB(242, 244, 248),     -- Modular composite habitat panels

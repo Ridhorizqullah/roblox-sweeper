@@ -7,6 +7,7 @@ local Palette = require(Config.Palette)
 local Assets = require(Config.Assets)
 local Cleaning = require(Config.Cleaning)
 local PartBuilder = require(script.Parent.AssetBuilder)
+local OutpostBuilder = require(script.Parent.OutpostBuilder)
 local Builder = {}
 
 function Builder.Build(parent: Instance): ()
@@ -106,5 +107,6 @@ function Builder.Build(parent: Instance): ()
 		local finish = origin + Vector3.new(target.X, Settings.LineOffsetY, target.Z)
 		PartBuilder.Part("GuideLine", folder, Vector3.new(Settings.LineWidth, Settings.LineHeight, (finish - start).Magnitude), CFrame.lookAt((start + finish) / 2, finish), Palette.RoadYellow)
 	end
+	OutpostBuilder.BuildOutpost(folder, origin)
 end
 return Builder
