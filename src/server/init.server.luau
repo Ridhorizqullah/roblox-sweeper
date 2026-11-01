@@ -6,17 +6,21 @@ local DataService = require(script.services.DataService)
 local PlayerStateService = require(script.services.PlayerStateService)
 local WorldService = require(script.services.WorldService)
 local CleaningService = require(script.services.CleaningService)
+local ToolService = require(script.services.ToolService)
+local ShopService = require(script.services.ShopService)
 local characterConnections: {[Player]: RBXScriptConnection} = {}
 
 DataService.Init()
 PlayerStateService.Init(DataService)
 WorldService.Init()
 CleaningService.Init()
+ShopService.Init()
 
 local function moveToSpawn(player: Player, character: Model)
 	local root = character:WaitForChild("HumanoidRootPart", Cleaning.SpawnWaitSeconds)
 	if root and player.Parent == Players and player.Character == character and DataService.Get(player) then
 		character:PivotTo(WorldService.GetSpawn().CFrame + Vector3.new(0, Cleaning.SpawnLift, 0))
+		ToolService.Refresh(player)
 	end
 end
 

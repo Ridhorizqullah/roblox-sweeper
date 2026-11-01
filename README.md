@@ -1,4 +1,24 @@
-# Planet Sweepers — Phase 2
+# Planet Sweepers — Phase 3
+
+## Phase 3: tools and shop
+
+Stop Play, keep `rojo serve` connected, allow sync, and start Play again. The server gives the equipped generated tool on spawn. Cleaning now requires that tool in the character's hand; select it in the backpack if unequipped.
+
+The blue station beside spawn opens the shop. Tool purchases are sequential; owned tools can be equipped free. Prices are rounded up from the exponential config formula on both server and client. Hand Broom costs $23. The first bag upgrade costs $20 and changes capacity from 25 to 40. Future bag prices use the current bag level. Bag requests include the expected next level, preventing duplicate requests from purchasing another level. Server checks living character, distance, current planet, ownership, cooldown, and balance before modifying data without yielding.
+
+Verification:
+1. Sell a full starter bag for $25. Open the blue shop and buy Hand Broom. Expect $2 remaining and two units collected per accepted action.
+2. Unaffordable buttons must appear disabled. Higher tools remain locked until the previous tier is owned.
+3. Equip an already-owned tool repeatedly; money must not change.
+4. Earn another $20 and buy the first bag upgrade. Expect capacity 40, with existing contents preserved.
+5. Open the shop, walk away, then try buying. Expect rejection with a distance message.
+6. Reset the character. The equipped tool must return once, without duplicated tools.
+7. Test a persistent profile using the instructions below. Owned tools, selected tool, bag level, and capacity must survive rejoin.
+8. Check phone and tablet sizes. The shop scrolls and its buttons are at least 64 pixels high.
+
+Phase 3 limitations: tool models are colored two-part placeholders differentiated by tier size. Cleaning still uses repeated prompts, not hold-click. Shop range and interaction need Studio playtesting. The first-purchase 20–30 second target remains unverified with walking and manual prompts. Pet, robot, and planet shops arrive in their later phases.
+
+Phase 3 validation: Rojo build passed; all 23 Luau source files passed syntax compilation. Runtime and persistence QA remain unverified. Earlier phase notes below are historical.
 
 Rojo project, configuration, server-owned player profiles, generated HUD, and the first playable clean-and-sell loop. No external assets or packages.
 

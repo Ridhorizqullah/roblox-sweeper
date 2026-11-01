@@ -27,6 +27,11 @@ function Service.Publish(player: Player): ()
 	folder.Name = "PlanetSweepersState"
 	folder:SetAttribute("DataReady", false)
 	folder:SetAttribute("Money", if data then data.money else 0)
+	folder:SetAttribute("BagLevel", if data then data.bagLevel else 0)
+	folder:SetAttribute("EquippedTool", if data then data.equippedTool else "")
+	if data then
+		for id, owned in data.ownedTools do folder:SetAttribute("Owned_" .. id, owned) end
+	end
 	folder:SetAttribute("BagAmount", if data then data.bagContents.amount else 0)
 	folder:SetAttribute("BagCapacity", if data then data.bagCapacity else 0)
 	folder:SetAttribute("Planet", if data then data.currentPlanet else "")

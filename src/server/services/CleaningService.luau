@@ -9,6 +9,7 @@ local Economy = require(config.Economy)
 local DataService = require(script.Parent.DataService)
 local PlayerStateService = require(script.Parent.PlayerStateService)
 local WorldService = require(script.Parent.WorldService)
+local ToolService = require(script.Parent.ToolService)
 
 type Node = {part: BasePart, remaining: number, respawnAt: number, prompt: ProximityPrompt}
 type Limits = {cleanAt: number, sellAt: number, tokens: number, updatedAt: number}
@@ -67,6 +68,7 @@ local function clean(player: Player, node: Node)
 	if not data or not data.unlockedPlanets[Cleaning.PlanetId] or data.currentPlanet ~= Cleaning.PlanetId then return end
 	local tool = Tools.ById[data.equippedTool]
 	if not tool or not data.ownedTools[data.equippedTool] then return end
+	if not ToolService.IsEquipped(player, data.equippedTool) then return end
 	local entry = getLimits(player)
 	local now = os.clock()
 	if now < entry.cleanAt or not inRange(player, node.part, tool.range) then return end
@@ -121,7 +123,9 @@ function Service.Init(): ()
 	running = true
 	local definition = Planets.ById[Cleaning.PlanetId]
 	for _, part in WorldService.GetNodes() do
-		local prompt = makePrompt(part, "Clean dust", Tools.ById.Toothbrush.range)
+		local maximumRange = 0
+		for _, tool in Tools.ById do maximumRange = math.max(maximumRange, tool.range) end
+		local prompt = makePrompt(part, "Clean dust", maximumRange)
 		local node: Node = {part = part, remaining = definition.nodeAmount, respawnAt = 0, prompt = prompt}
 		part:SetAttribute("Remaining", node.remaining)
 		table.insert(nodes, node)
