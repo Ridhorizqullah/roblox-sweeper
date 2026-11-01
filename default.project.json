@@ -1,0 +1,9 @@
+{
+  "name": "PlanetSweepers",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": { "Shared": { "$path": "src/shared" } },
+    "ServerScriptService": { "PlanetSweepersServer": { "$path": "src/server" } },
+    "StarterPlayer": { "StarterPlayerScripts": { "PlanetSweepersClient": { "$path": "src/client" } } }
+  }
+}

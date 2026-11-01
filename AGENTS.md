@@ -1,0 +1,201 @@
+# AGENTS.md — Planet Sweepers (Roblox)
+
+This file is the single source of truth for every AI agent working on this repo (OpenCode, Antigravity, or any other). Read it fully before touching any file. If a user instruction conflicts with this file, follow the user and mention the conflict.
+
+## 1. Project Summary
+
+**Planet Sweepers** (working title) is a Roblox incremental + co-op cleaning game.
+
+Core loop: clean dirt -> fill bag -> sell for money -> upgrade tools / bag / robots -> unlock new planets -> repeat.
+Collection layer: cleaning dirt has a small chance to uncover hidden cute pets that follow the player and boost income.
+Co-op: more players nearby = bonus sell value. Target 16+ players per server.
+
+Mechanics are inspired by the genre, but all names, visuals, and theme must be original.
+
+## 2. Tech Stack
+
+- Language: Luau, use `--!strict` wherever practical.
+- Sync: Rojo (`default.project.json`).
+- Version control: Git. Commit at the end of every phase.
+- No external assets, no Toolbox models. Build world, dirt, stations, tools, pets, and UI from code using basic Parts and Instances. Use placeholder colors and shapes.
+
+## 3. Folder Structure
+
+```
+.
+├── AGENTS.md
+├── default.project.json
+├── README.md
+└── src
+    ├── server    -> ServerScriptService
+    ├── client    -> StarterPlayer/StarterPlayerScripts
+    └── shared    -> ReplicatedStorage/Shared
+        └── config   (Tools, Planets, Pets, Upgrades, Vehicles, Economy)
+```
+
+Rules:
+- `shared/config/*` holds ALL tunable numbers. Never hardcode balance values inside logic.
+- One module = one responsibility. No giant scripts. Keep files under ~300 lines where possible.
+- Name modules clearly (`DataService`, `DirtService`, `ShopService`, `PetService`, `RobotService`, etc.).
+- Services on the server, Controllers on the client (e.g. `HudController`, `ShopController`).
+
+## 4. Non-Negotiable Rules
+
+### Server authority
+- ALL gameplay logic runs on the server. The client only sends requests via RemoteEvents / RemoteFunctions.
+- The server validates everything: argument types, ranges, distance, cooldown, bag capacity, cost, ownership, unlock status.
+- Never trust any value sent by the client. Never let the client set money, items, or rolls.
+- The server performs every random roll (pet drops, rarity, variants).
+
+### Remote security
+- Every remote handler must: check `typeof`/`type` of each argument, reject NaN / inf / negative numbers, and apply a per-player rate limit.
+- Check the player's distance to the dirt node or station on the server.
+- Prevent duplicate purchases and double-spend (re-check balance right before deducting).
+- Fail silently or return a clear error code. Never throw errors from remote handlers.
+
+### Data (DataStore)
+- Wrap every DataStore call in `pcall` with retries and backoff.
+- Save on `PlayerRemoving`, on `game:BindToClose`, and autosave every 60 seconds.
+- Use a session lock or an equivalent guard against overwrite and data loss.
+- Include a `dataVersion` field and a migration function.
+- If loading fails, do NOT overwrite saved data with defaults. Kick the player or block saving with a clear message.
+
+Player data schema:
+```
+money, gems, bagCapacity, bagContents, equippedTool, ownedTools,
+unlockedPlanets, ownedVehicles, pets (id, rarity, variant),
+equippedPets, totalCleaned, rebirths, lastSeen, dataVersion
+```
+
+### Memory and cleanup
+- Disconnect every connection when a player leaves or an object is destroyed.
+- Clean per-player tables on `PlayerRemoving`.
+- Avoid unbounded loops. Use `task.wait`, never `wait`. Use `task.spawn` / `task.defer`.
+
+### Performance
+- Target smooth play on low-end mobile.
+- Limit total Part count. Prefer pooling over create/destroy spam for dirt respawn.
+- Avoid per-frame work on the server. Batch updates.
+- Do heavy visual effects on the client only.
+
+## 5. Game Design Reference
+
+### Economy (all values live in config)
+- Upgrade cost formula: `baseCost * 1.15 ^ level`.
+- First purchase must be affordable within about 20-30 seconds of play.
+- Dirt value scales per planet.
+- Pets add a money multiplier (additive among equipped pets).
+- Co-op bonus: +5% sell value per additional player within 60 studs, capped at +50%.
+
+### Tools (6 tiers)
+Toothbrush -> Hand Broom -> Vacuum -> Leaf Blower -> Plasma Cleaner -> Quantum Sweeper.
+Each tool defines: `power`, `speed` (cooldown), `range`, `price`.
+
+### Planets (3 for MVP)
+1. Dusty Moonlet (starter)
+2. Crystal Desert
+3. Neon Swamp
+
+Each planet defines: dirt color, dirt value, dirt density, unlock price, pet pool. Portals check unlock status on the server.
+
+### Pets
+- Roll chance to uncover a pet when dirt is cleaned (config, e.g. 1.5%).
+- Rarity: Common 60%, Rare 25%, Epic 10%, Legendary 4%, Mythic 1% (config).
+- Variants: Gold, Rainbow (rare, higher multiplier).
+- Limited equip slots (start with 3).
+- Pets follow the player using a simple lerp-behind-character behavior.
+- **Drop rates MUST be displayed clearly in the UI** (Roblox policy for randomized items).
+
+### Robots / Vehicles
+- Phase 1: auto-cleaning robots (config: speed, range, price, max count).
+- Phase 2 (optional): drivable cleaning vehicle.
+
+## 6. UI Guidelines
+
+- Built with code (`Instance.new`), clean and simple.
+- Mobile first: use `Scale` sizing, `UIAspectRatioConstraint`, `UIListLayout`, and large tap targets (min ~44px).
+- Test at phone, tablet, and desktop sizes.
+- HUD: money, bag (current/capacity with progress bar), current planet.
+- Shop: buttons show a disabled state when unaffordable.
+- Number formatting through one shared util: 1.5K, 2.3M, 4.1B, etc.
+- Feedback: floating "+$" on sell, sound placeholders, particles/tweens on clean and on pet reveal.
+
+## 7. Code Style
+
+- Luau, tabs or 4 spaces (match existing files, stay consistent).
+- `PascalCase` for modules, services, classes. `camelCase` for variables and functions. `UPPER_SNAKE_CASE` for constants.
+- Type annotations on public functions and module APIs.
+- Comment the WHY, not the obvious WHAT.
+- No `wait()`, `spawn()`, `delay()` (deprecated). Use `task` library.
+- No magic numbers. Put them in config.
+- Prefer returning `(success, errorMessage)` over throwing for expected failures.
+
+## 8. Workflow Rules
+
+### Phases (do ONE at a time, then stop and wait for "continue")
+1. Rojo setup + config modules + player data (create/load/save) + HUD (money, bag)
+2. Planet 1: dirt nodes, cleaning logic, bag, sell station, dirt respawn
+3. Tool system + shop UI (tools, bag upgrades), exponential costs
+4. Pets: discovery, rarity rolls, inventory, equip, income multiplier, Pet Index with drop rates
+5. Planets 2 and 3, unlock system, portals
+6. Cleaning robots + co-op bonus
+7. Polish: effects, sound placeholders, leaderboard, daily reward
+8. Monetization stubs: 2x Money gamepass, bigger bag gamepass (TODO markers for real IDs)
+
+### At the start of each phase
+- Show the full file tree.
+- State assumptions briefly if anything is ambiguous, then continue.
+
+### At the end of each phase, report
+1. How to run and test (`rojo serve`, connect from Studio).
+2. What to verify.
+3. Known limitations.
+
+### Output rules
+- Provide complete file contents. No "rest of code here" placeholders.
+- Do not modify files outside the current phase unless required to fix a bug. If you must, say so.
+- Never delete or rewrite working code without saying why.
+- If something fails, explain the root cause, not just a patch.
+
+## 9. Agent Roles (avoid conflicts)
+
+- **OpenCode = Builder.** Writes code for the current phase.
+- **Antigravity = Reviewer / QA.** Audits security, memory leaks, DataStore risks, performance, mobile UI, and docs. Proposes fixes as a list or a small patch; does not rewrite large areas.
+- Never run both agents on the same files at the same time.
+- Always commit before handing over to the other agent.
+
+### Reviewer checklist
+- [ ] Every remote validates types, ranges, distance, and has a rate limit
+- [ ] Server decides all random rolls and all currency changes
+- [ ] No client-trusted values
+- [ ] DataStore calls use pcall + retry, saves on leave and BindToClose
+- [ ] No leaked connections or per-player tables
+- [ ] No deprecated APIs (`wait`, `spawn`, `delay`)
+- [ ] Balance values live in config only
+- [ ] UI works on small mobile screens
+- [ ] Pet drop rates visible in UI
+- [ ] No external assets or Toolbox dependencies
+
+## 10. Commands
+
+```bash
+# Start Rojo live sync (then connect from the Rojo plugin in Studio)
+rojo serve
+
+# Build a place file
+rojo build -o build/PlanetSweepers.rbxlx
+
+# Format / lint (if configured)
+stylua src
+selene src
+```
+
+## 11. Out of Scope for Now
+
+- Trading, rebirth/prestige, ranked events, and cross-server features (add after MVP).
+- Custom 3D models and animations (placeholders only).
+- Real gamepass / product IDs (leave `TODO` markers; the human adds real IDs).
+
+## 12. Human Responsibilities (agents cannot do these)
+
+Playtesting in Studio, mobile emulator checks, multi-client tests, Creator Dashboard setup, gamepass creation, thumbnails, age rating questionnaire, and publishing. When a task requires one of these, say so clearly and list the exact steps for the human.
