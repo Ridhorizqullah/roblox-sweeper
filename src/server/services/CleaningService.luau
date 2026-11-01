@@ -26,6 +26,23 @@ local connections: {RBXScriptConnection} = {}
 local started = false
 local running = false
 local stationPrompts: {ProximityPrompt} = {}
+local cellEvent: RemoteEvent? = nil
+
+local function cellIdOf(node: Node): string
+	return node.planetId .. "_" .. tostring(node.part:GetAttribute("nodeId"))
+end
+
+local function emitCell(action: string, node: Node, target: Vector3?)
+	-- Visual-only broadcast. Gameplay state already mutated before this yields.
+	local event = cellEvent
+	if not event then return end
+	for _, other in Players:GetPlayers() do
+		local data = DataService.Get(other)
+		if data and data.currentPlanet == node.planetId then
+			event:FireClient(other, action, cellIdOf(node), target)
+		end
+	end
+end
 
 local function getLimits(player: Player): Limits
 	local existing = limits[player]
@@ -90,6 +107,8 @@ local function collect(player: Player, node: Node, power: number, range: number)
 		node.part.Transparency = Cleaning.RespawnTransparency
 		node.part.CanQuery = false
 		PetService.Discover(player, node.planetId)
+		local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+		emitCell("Clean", node, if root and root:IsA("BasePart") then root.Position else node.part.Position)
 	end
 	PlayerStateService.Publish(player)
 	return true
@@ -158,6 +177,10 @@ function Service.Init(): ()
 	if started then return end
 	started = true
 	running = true
+	local event = Instance.new("RemoteEvent")
+	event.Name = "PlanetSweepersCells"
+	event.Parent = ReplicatedStorage
+	cellEvent = event
 	for _, part in WorldService.GetNodes() do
 		local planetId = part:GetAttribute("PlanetId") :: string
 		local definition = Planets.ById[planetId]
@@ -189,6 +212,7 @@ function Service.Init(): ()
 					node.part.CanQuery = true
 					node.part:SetAttribute("Remaining", node.remaining)
 					node.prompt.Enabled = true
+					emitCell("Respawn", node, nil)
 				end
 			end
 		end
