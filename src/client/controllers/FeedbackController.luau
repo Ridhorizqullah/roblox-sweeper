@@ -23,7 +23,7 @@ function Controller.Start(): ()
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-	-- Floating Daily Reward Button
+	-- Floating Daily Reward Button (Managed by HudController RightButtonStack)
 	local button = Instance.new("TextButton")
 	button.Name = "DailyRewardButton"
 	button.AnchorPoint = Vector2.new(1, 0)
@@ -35,6 +35,7 @@ function Controller.Start(): ()
 	button.TextSize = 13
 	button.BorderSizePixel = 0
 	button.TextWrapped = true
+	button.Visible = false -- Unified in HudController right stack
 	button.Parent = gui
 
 	local btnCorner = Instance.new("UICorner")

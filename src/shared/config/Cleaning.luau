@@ -1,17 +1,18 @@
 --!strict
+local Layout = require(script.Parent.Layout)
+
 return {
 	PlanetId = "DustyMoonlet",
-	Origin = Vector3.new(0, 100, 0),
+	Origin = Layout.Origin,
 	GroundThickness = 4,
-	SpawnOffset = Vector3.new(0, 5, 0),
-	SpawnSize = Vector3.new(12, 1, 12),
-	SellOffset = Vector3.new(0, 3, -16),
-	SellSize = Vector3.new(12, 2, 12),
-	NodeSize = Vector3.new(5, 2, 5),
-	GridSpacing = 18,
-	GridColumns = 11,
-	ReservedRadius = 25,
-	EdgeMargin = 16,
+
+	-- Offsets and sizes sourced from Layout (Single Source of Truth)
+	SpawnOffset = Vector3.new(Layout.Base.Center.X, 0, Layout.Base.Center.Y),
+	SpawnSize = Layout.Base.Size,
+	SellOffset = Vector3.new(Layout.Sell.Center.X, 0, Layout.Sell.Center.Y),
+	SellSize = Layout.Sell.Size,
+	NodeSize = Layout.DustZones.A.CellSize,
+
 	RespawnPollSeconds = 0.5,
 	SellCooldown = 0.5,
 	PromptHoldSeconds = 0.25,
@@ -21,8 +22,10 @@ return {
 	RespawnTransparency = 1,
 	SpawnColor = Color3.fromRGB(125, 190, 235),
 	SellColor = Color3.fromRGB(105, 215, 155),
-	LabelSize = Vector2.new(300, 90),
-	LabelOffset = Vector3.new(0, 6, 0),
-	LabelMaxDistance = 120,
-	LabelTextSize = 20,
+
+	-- Billboard & Prompt configs
+	LabelSize = Vector2.new(240, 60),
+	LabelOffset = Layout.Sell.StudsOffset,
+	LabelMaxDistance = 40,
+	LabelTextSize = 16,
 }

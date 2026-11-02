@@ -1,10 +1,13 @@
 --!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+
 local Config = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("config")
+local Layout = require(Config:WaitForChild("Layout"))
 local Cleaning = require(Config:WaitForChild("Cleaning"))
 local Game = require(Config:WaitForChild("Game"))
 local Planets = require(Config:WaitForChild("Planets"))
+local Palette = require(Config:WaitForChild("Palette"))
 local WorldLook = require(ReplicatedStorage.Shared.art.WorldLookBuilder)
 
 local Service = {}
@@ -16,11 +19,11 @@ local WORLD_NAME = "PlanetSweepersWorld"
 local spawns: {[string]: SpawnLocation} = {}
 local stations: {[string]: BasePart} = {}
 
-local function makePart(name: string, size: Vector3, position: Vector3, color: Color3, parent: Instance): Part
+local function makePart(name: string, size: Vector3, cf: CFrame, color: Color3, parent: Instance): Part
 	local part = Instance.new("Part")
 	part.Name = name
 	part.Size = size
-	part.Position = position
+	part.CFrame = cf
 	part.Color = color
 	part.Anchored = true
 	part.TopSurface = Enum.SurfaceType.Smooth
@@ -29,45 +32,65 @@ local function makePart(name: string, size: Vector3, position: Vector3, color: C
 	return part
 end
 
-local function addLabel(part: BasePart, text: string): ()
+local function addLabel(part: BasePart, text: string, studsOffset: Vector3?, maxDistance: number?): ()
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "Instructions"
-	billboard.Size = UDim2.fromOffset(Cleaning.LabelSize.X, Cleaning.LabelSize.Y)
-	billboard.StudsOffset = Cleaning.LabelOffset
-	billboard.MaxDistance = Cleaning.LabelMaxDistance
+	billboard.Size = UDim2.fromOffset(220, 56)
+	billboard.StudsOffset = studsOffset or Vector3.new(0, 5.5, 0)
+	billboard.MaxDistance = maxDistance or 40
 	billboard.AlwaysOnTop = true
 	billboard.Adornee = part
+
 	local label = Instance.new("TextLabel")
 	label.Size = UDim2.fromScale(1, 1)
 	label.BackgroundTransparency = 1
 	label.Text = text
-	label.TextColor3 = Color3.new(1, 1, 1)
-	label.TextStrokeTransparency = 0
-	label.TextSize = Cleaning.LabelTextSize
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.TextStrokeTransparency = 0.2
+	label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
+	label.TextSize = 15
 	label.TextWrapped = true
 	label.Font = Enum.Font.GothamBold
 	label.Parent = billboard
+
 	billboard.Parent = part
 end
 
-local function getNodePositions(count: number): {Vector3}
-	local positions: {Vector3} = {}
-	local halfExtent = Game.World.ZoneSize / 2 - Cleaning.EdgeMargin
-	local rows = math.floor(halfExtent * 2 / Cleaning.GridSpacing) + 1
-	local groundTop = Cleaning.GroundThickness / 2
-	for row = 1, rows do
-		local z = (row - (rows + 1) / 2) * Cleaning.GridSpacing
-		for column = 1, Cleaning.GridColumns do
-			local x = (column - (Cleaning.GridColumns + 1) / 2) * Cleaning.GridSpacing
-			if math.abs(x) <= halfExtent and Vector2.new(x, z).Magnitude >= Cleaning.ReservedRadius then
-				table.insert(positions, Cleaning.Origin + Vector3.new(x, groundTop + Cleaning.NodeSize.Y / 2, z))
-				if #positions == count then
-					return positions
-				end
-			end
-		end
+-- Builds yellow painted floor guide lines between origins and destinations
+local function buildGuideLines(parent: Instance, origin: Vector3)
+	local linesFolder = Instance.new("Folder")
+	linesFolder.Name = "GuideLines"
+	linesFolder.Parent = parent
+
+	local cfg = Layout.GuideLines
+	for _, conn in ipairs(cfg.Connections) do
+		local fromPos = Vector2.new(origin.X + conn.From.X, origin.Z + conn.From.Y)
+		local toPos = Vector2.new(origin.X + conn.To.X, origin.Z + conn.To.Y)
+
+		local fromY = Layout.GetGroundY(fromPos.X, fromPos.Y, origin.Y + 2)
+		local toY = Layout.GetGroundY(toPos.X, toPos.Y, origin.Y + 2)
+
+		local start = Vector3.new(fromPos.X, fromY + cfg.LineHeight / 2 + 0.05, fromPos.Y)
+		local finish = Vector3.new(toPos.X, toY + cfg.LineHeight / 2 + 0.05, toPos.Y)
+
+		local length = (finish - start).Magnitude
+		local center = (start + finish) / 2
+		local lineCF = CFrame.lookAt(center, finish)
+
+		local line = Instance.new("Part")
+		line.Name = "GuideLine_" .. conn.Label
+		line.Size = Vector3.new(cfg.LineWidth, cfg.LineHeight, length)
+		line.CFrame = lineCF
+		line.Color = Palette.RoadYellow or Color3.fromRGB(250, 205, 50)
+		line.Material = Enum.Material.SmoothPlastic
+		line.Anchored = true
+		line.CanCollide = false
+		line.CanTouch = false
+		line.CanQuery = false
+		line.CastShadow = false
+		line.CollisionGroup = "Decor"
+		line.Parent = linesFolder
 	end
-	error("Cleaning grid cannot fit configured planet dirt density")
 end
 
 function Service.Init(): ()
@@ -76,18 +99,24 @@ function Service.Init(): ()
 		return
 	end
 	assert(not Workspace:FindFirstChild(WORLD_NAME), "WorldService refuses to overwrite existing Workspace.PlanetSweepersWorld")
+
 	local planet = Planets.ById[Cleaning.PlanetId]
 	assert(planet, "Cleaning.PlanetId must reference a configured planet")
-	local positions = getNodePositions(planet.dirtDensity)
+
 	local folder = Instance.new("Folder")
 	folder.Name = WORLD_NAME
 	folder:SetAttribute("PlanetId", Cleaning.PlanetId)
 
-	makePart("Ground", Vector3.new(Game.World.ZoneSize, Cleaning.GroundThickness, Game.World.ZoneSize), Cleaning.Origin, planet.groundColor, folder)
+	-- 1. Base terrain ground foundation
+	local groundCF = CFrame.new(Cleaning.Origin.X, Cleaning.Origin.Y - Cleaning.GroundThickness / 2, Cleaning.Origin.Z)
+	makePart("Ground", Vector3.new(Game.World.ZoneSize, Cleaning.GroundThickness, Game.World.ZoneSize), groundCF, planet.groundColor, folder)
+
+	-- 2. Spawn platform at (0, 0)
+	local spawnCF = Layout.GetCFrame(Cleaning.Origin, Layout.Base.Center, Layout.Base.Size, false)
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "MoonletSpawn"
-	spawn.Size = Cleaning.SpawnSize
-	spawn.Position = Cleaning.Origin + Cleaning.SpawnOffset
+	spawn.Size = Layout.Base.Size
+	spawn.CFrame = spawnCF
 	spawn.Color = Cleaning.SpawnColor
 	spawn.Anchored = true
 	spawn.Neutral = true
@@ -95,16 +124,47 @@ function Service.Init(): ()
 	spawn.TopSurface = Enum.SurfaceType.Smooth
 	spawn.BottomSurface = Enum.SurfaceType.Smooth
 	spawn.Parent = folder
-	addLabel(spawn, planet.name .. "\nApproach dust and hold the Clean dust prompt")
+	addLabel(spawn, planet.name .. "\nApproach dust & hold Clean prompt", Layout.Base.StudsOffset, 40)
 
-	local station = makePart("SellStation", Cleaning.SellSize, Cleaning.Origin + Cleaning.SellOffset, Cleaning.SellColor, folder)
-	addLabel(station, "SELL DIRT\nUse the prompt to empty your bag")
+	-- 3. Sell Station at (15, 0), facing center (0, 0)
+	local sellCF = Layout.GetCFrame(Cleaning.Origin, Layout.Sell.Center, Layout.Sell.Size, true)
+	local station = makePart("SellStation", Layout.Sell.Size, sellCF, Cleaning.SellColor, folder)
+	addLabel(station, "RECYCLER STATION\nSell bag contents", Layout.Sell.StudsOffset, 40)
+
+	-- 4. Pets & Daily Reward Kiosk at (0, 18), facing center (0, 0)
+	local kioskCF = Layout.GetCFrame(Cleaning.Origin, Layout.Kiosk.Center, Layout.Kiosk.Size, true)
+	local kiosk = makePart("PetsDailyKiosk", Layout.Kiosk.Size, kioskCF, Color3.fromRGB(165, 94, 234), folder)
+	addLabel(kiosk, "PETS & DAILY REWARDS\nHub Kiosk", Layout.Kiosk.StudsOffset, 40)
+
+	-- ProximityPrompt for Kiosk: opens Pets/Daily UI on interaction
+	local kioskPrompt = Instance.new("ProximityPrompt")
+	kioskPrompt.ActionText = "Open Station"
+	kioskPrompt.ObjectText = "Pets & Daily Kiosk"
+	kioskPrompt.MaxActivationDistance = Layout.Kiosk.MaxDistance
+	kioskPrompt.RequiresLineOfSight = false
+	kioskPrompt.Parent = kiosk
+
+	kioskPrompt.Triggered:Connect(function(player)
+		local petRemote = ReplicatedStorage:FindFirstChild("PlanetSweepersPets")
+		if petRemote and petRemote:IsA("RemoteEvent") then
+			petRemote:FireClient(player, "OpenUI")
+		end
+	end)
+
+	-- 5. Yellow guide lines
+	buildGuideLines(folder, Cleaning.Origin)
+
+	-- 6. Dust Nodes laid out on clean grid inside Zone A, Zone B, and Zone C
 	local dirtFolder = Instance.new("Folder")
 	dirtFolder.Name = "DirtNodes"
 	dirtFolder.Parent = folder
+
+	local gridPositions = Layout.GetZoneGridPositions(Cleaning.Origin, planet.dirtDensity)
 	local generatedNodes: {BasePart} = {}
-	for nodeId, position in ipairs(positions) do
-		local node = makePart("Dirt_" .. nodeId, Cleaning.NodeSize, position, planet.dirtColor, dirtFolder)
+
+	for nodeId, position in ipairs(gridPositions) do
+		local nodeCF = CFrame.new(position)
+		local node = makePart("Dirt_" .. nodeId, Layout.DustZones.A.CellSize, nodeCF, planet.dirtColor, dirtFolder)
 		node.CanCollide = false
 		node.CanTouch = false
 		node:SetAttribute("nodeId", nodeId)
@@ -112,7 +172,13 @@ function Service.Init(): ()
 		table.insert(generatedNodes, node)
 	end
 
-	-- Publish only after construction so other services never observe a partial world.
+	-- 7. Validate layout clearances and vertical alignment
+	Layout.Validate(Cleaning.Origin)
+
+	-- 8. Draw Studio visual debug gizmos
+	Layout.DrawDebugGizmos(folder, Cleaning.Origin)
+
+	-- Publish to Workspace
 	folder.Parent = Workspace
 	world = folder
 	nodes = generatedNodes
@@ -122,28 +188,39 @@ function Service.Init(): ()
 	station:SetAttribute("PlanetId", Cleaning.PlanetId)
 	spawns[Cleaning.PlanetId] = spawn
 	stations[Cleaning.PlanetId] = station
-	for index, id in Planets.Order do
+
+	-- Initialize other planets with their respective zones and offsets
+	for index, id in ipairs(Planets.Order) do
 		if id == Cleaning.PlanetId then continue end
 		local definition = Planets.ById[id]
 		local offset = Vector3.new((index - 1) * Game.World.ZoneSpacing, 0, 0)
 		local zone = Instance.new("Folder")
 		zone.Name = id
 		zone.Parent = folder
-		makePart("Ground", Vector3.new(Game.World.ZoneSize, Cleaning.GroundThickness, Game.World.ZoneSize), Cleaning.Origin + offset, definition.groundColor, zone)
+
+		local zoneGroundCF = CFrame.new(Cleaning.Origin.X + offset.X, Cleaning.Origin.Y - Cleaning.GroundThickness / 2, Cleaning.Origin.Z + offset.Z)
+		makePart("Ground", Vector3.new(Game.World.ZoneSize, Cleaning.GroundThickness, Game.World.ZoneSize), zoneGroundCF, definition.groundColor, zone)
+
 		local destination = spawn:Clone()
 		destination.Name = id .. "Spawn"
-		destination.Position += offset
+		destination.CFrame = Layout.GetCFrame(Cleaning.Origin + offset, Layout.Base.Center, Layout.Base.Size, false)
 		destination:SetAttribute("PlanetId", id)
-		destination.Instructions:Destroy()
-		addLabel(destination, definition.name)
+		local oldInstructions = destination:FindFirstChild("Instructions")
+		if oldInstructions then oldInstructions:Destroy() end
+		addLabel(destination, definition.name, Layout.Base.StudsOffset, 40)
 		destination.Parent = zone
 		spawns[id] = destination
-		local recycler = makePart("SellStation", Cleaning.SellSize, Cleaning.Origin + offset + Cleaning.SellOffset, Cleaning.SellColor, zone)
+
+		local recyclerCF = Layout.GetCFrame(Cleaning.Origin + offset, Layout.Sell.Center, Layout.Sell.Size, true)
+		local recycler = makePart("SellStation", Layout.Sell.Size, recyclerCF, Cleaning.SellColor, zone)
 		recycler:SetAttribute("PlanetId", id)
-		addLabel(recycler, "SELL DIRT")
+		addLabel(recycler, "RECYCLER STATION", Layout.Sell.StudsOffset, 40)
 		stations[id] = recycler
-		for nodeId, position in getNodePositions(definition.dirtDensity) do
-			local node = makePart(id .. "_Dirt_" .. nodeId, Cleaning.NodeSize, position + offset, definition.dirtColor, dirtFolder)
+
+		buildGuideLines(zone, Cleaning.Origin + offset)
+
+		for nodeId, position in ipairs(Layout.GetZoneGridPositions(Cleaning.Origin + offset, definition.dirtDensity)) do
+			local node = makePart(id .. "_Dirt_" .. nodeId, Layout.DustZones.A.CellSize, CFrame.new(position), definition.dirtColor, dirtFolder)
 			node.CanCollide = false
 			node.CanTouch = false
 			node:SetAttribute("nodeId", nodeId)

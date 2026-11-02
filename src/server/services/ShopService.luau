@@ -2,6 +2,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local config = ReplicatedStorage.Shared.config
+local Layout = require(config.Layout)
 local Shop = require(config.Shop)
 local Cleaning = require(config.Cleaning)
 local Tools = require(config.Tools)
@@ -19,17 +20,39 @@ function Service.Init(): ()
 	local station = Instance.new("Part")
 	station.Name = "ShopStation"
 	station.Anchored = true
-	station.Size = Shop.Size
-	station.Position = Cleaning.Origin + Shop.Offset
+	station.Size = Layout.Shop.Size
+	station.CFrame = Layout.GetCFrame(Cleaning.Origin, Layout.Shop.Center, Layout.Shop.Size, true)
 	station.Color = Shop.Color
 	station.Parent = workspace:WaitForChild("PlanetSweepersWorld")
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "Instructions"
+	billboard.Size = UDim2.fromOffset(220, 56)
+	billboard.StudsOffset = Layout.Shop.StudsOffset
+	billboard.MaxDistance = 40
+	billboard.AlwaysOnTop = true
+	billboard.Adornee = station
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Text = "EQUIPMENT KIOSK\nTools, Bags & Robots"
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.TextStrokeTransparency = 0.2
+	label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
+	label.TextSize = 15
+	label.TextWrapped = true
+	label.Font = Enum.Font.GothamBold
+	label.Parent = billboard
+	billboard.Parent = station
+
 	local remote = Instance.new("RemoteEvent")
 	remote.Name = "PlanetSweepersShop"
 	remote.Parent = ReplicatedStorage
 	local prompt = Instance.new("ProximityPrompt")
-	prompt.ActionText = "Open shop"
-	prompt.ObjectText = "Tools and bags"
-	prompt.MaxActivationDistance = Shop.Radius
+	prompt.ActionText = Layout.Shop.PromptAction
+	prompt.ObjectText = Layout.Shop.PromptObject
+	prompt.MaxActivationDistance = Layout.Shop.MaxDistance
 	prompt.RequiresLineOfSight = false
 	prompt.Parent = station
 	local function nearby(player: Player): boolean

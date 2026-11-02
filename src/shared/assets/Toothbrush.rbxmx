@@ -1,0 +1,174 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+<Item class="Tool" referent="RBX1"><Properties><string name="Name">Toothbrush</string>
+<bool name="RequiresHandle">true</bool><bool name="CanBeDropped">false</bool>
+</Properties>
+<Item class="Part" referent="RBX2"><Properties>
+<string name="Name">Handle</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294638332</Color3uint8>
+<Vector3 name="size"><X>0.5</X><Y>0.35</Y><Z>4.8</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0</Y><Z>0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX3"><Properties>
+<string name="Name">HandleGrip</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4282155750</Color3uint8>
+<Vector3 name="size"><X>0.52</X><Y>0.37</Y><Z>1.6</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0</Y><Z>1.5</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX12"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX3</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX4"><Properties>
+<string name="Name">Neck</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294638332</Color3uint8>
+<Vector3 name="size"><X>0.4</X><Y>0.3</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.1</Y><Z>-2.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX13"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX4</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX5"><Properties>
+<string name="Name">Head</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4282155750</Color3uint8>
+<Vector3 name="size"><X>0.7</X><Y>0.4</Y><Z>1.8</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.15</Y><Z>-3.6</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX14"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX5</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX6"><Properties>
+<string name="Name">Bristle0</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4283492095</Color3uint8>
+<Vector3 name="size"><X>0.55</X><Y>0.55</Y><Z>0.18</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.55</Y><Z>-2.95</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX15"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX6</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX7"><Properties>
+<string name="Name">Bristle1</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4283492095</Color3uint8>
+<Vector3 name="size"><X>0.55</X><Y>0.55</Y><Z>0.18</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.55</Y><Z>-3.33</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX16"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX7</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX8"><Properties>
+<string name="Name">Bristle2</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4283492095</Color3uint8>
+<Vector3 name="size"><X>0.55</X><Y>0.55</Y><Z>0.18</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.55</Y><Z>-3.71</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX17"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX8</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX9"><Properties>
+<string name="Name">Bristle3</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4283492095</Color3uint8>
+<Vector3 name="size"><X>0.55</X><Y>0.55</Y><Z>0.18</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.55</Y><Z>-4.09</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX18"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX9</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX10"><Properties>
+<string name="Name">Bristle4</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4283492095</Color3uint8>
+<Vector3 name="size"><X>0.55</X><Y>0.55</Y><Z>0.18</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.55</Y><Z>-4.470000000000001</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX19"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX10</Ref></Properties></Item>
+</Item>
+<Item class="Part" referent="RBX11"><Properties>
+<string name="Name">Tip</string><bool name="Anchored">false</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">0</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4282155750</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>0.4</Y><Z>0.5</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.15</Y><Z>-4.5</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+<Item class="WeldConstraint" referent="RBX20"><Properties><string name="Name">Weld</string><Ref name="Part0">RBX2</Ref><Ref name="Part1">RBX11</Ref></Properties></Item>
+</Item>
+</Item></roblox>

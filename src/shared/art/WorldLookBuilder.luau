@@ -102,11 +102,6 @@ function Builder.Build(parent: Instance): ()
 	end
 	local ground = parent:FindFirstChild("Ground")
 	if ground and ground:IsA("BasePart") then ground.Color = Palette.Ground; ground.Transparency = 1 end
-	local start = origin + Vector3.new(0, Settings.LineOffsetY, 0)
-	for _, target in {Cleaning.SellOffset, Vector3.new(16, 0, 0), Vector3.new(-16, 0, 12)} do
-		local finish = origin + Vector3.new(target.X, Settings.LineOffsetY, target.Z)
-		PartBuilder.Part("GuideLine", folder, Vector3.new(Settings.LineWidth, Settings.LineHeight, (finish - start).Magnitude), CFrame.lookAt((start + finish) / 2, finish), Palette.RoadYellow)
-	end
 	OutpostBuilder.BuildOutpost(folder, origin)
 end
 return Builder

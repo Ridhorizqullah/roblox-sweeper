@@ -30,7 +30,7 @@ function Controller.Start(): ()
 	local snapshot: any = {pets = {}, equipped = {}, index = {}, multiplier = 1}
 	local currentTab: "Inventory" | "Index" = "Inventory"
 
-	-- Floating HUD Open Button
+	-- Floating HUD Open Button (Managed by HudController RightButtonStack)
 	local open = Instance.new("TextButton")
 	open.Name = "OpenPetsButton"
 	open.Text = "🐾 PETS"
@@ -42,6 +42,7 @@ function Controller.Start(): ()
 	open.Size = UDim2.fromOffset(110, 42)
 	open.AnchorPoint = Vector2.new(1, 0)
 	open.Position = UDim2.new(1, -16, 0, 16)
+	open.Visible = false -- Unified in HudController right stack
 	open.Parent = gui
 
 	local openCorner = Instance.new("UICorner")
@@ -504,7 +505,9 @@ function Controller.Start(): ()
 	end))
 
 	table.insert(connections, remote.OnClientEvent:Connect(function(action, payload)
-		if action == "State" then
+		if action == "OpenUI" then
+			openPanel()
+		elseif action == "State" then
 			snapshot = payload
 			render()
 		elseif action == "Found" and typeof(payload) == "table" then

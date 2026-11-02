@@ -1,0 +1,421 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+<Item class="Model" referent="RBX1"><Properties><string name="Name">SweeperCart</string>
+<Ref name="PrimaryPart">RBX2</Ref>
+</Properties>
+<Item class="Part" referent="RBX2"><Properties>
+<string name="Name">Body</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4293978326</Color3uint8>
+<Vector3 name="size"><X>4</X><Y>1.6</Y><Z>5</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>2.0</Y><Z>0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX3"><Properties>
+<string name="Name">Chassis</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4280438356</Color3uint8>
+<Vector3 name="size"><X>4.2</X><Y>0.8</Y><Z>5.4</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>1.0</Y><Z>0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX4"><Properties>
+<string name="Name">Hood</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4293978326</Color3uint8>
+<Vector3 name="size"><X>3.6</X><Y>0.5</Y><Z>2.2</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>3.0</Y><Z>-1.3</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX5"><Properties>
+<string name="Name">Dash</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4280438356</Color3uint8>
+<Vector3 name="size"><X>3.4</X><Y>0.9</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>3.0</Y><Z>1.5</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX6"><Properties>
+<string name="Name">PanelL</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.15</X><Y>0.9</Y><Z>2.2</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.06</X><Y>2.1</Y><Z>-0.2</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX7"><Properties>
+<string name="Name">PanelR</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.15</X><Y>0.9</Y><Z>2.2</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.06</X><Y>2.1</Y><Z>-0.2</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX8"><Properties>
+<string name="Name">StripeL</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4293978326</Color3uint8>
+<Vector3 name="size"><X>0.16</X><Y>0.2</Y><Z>1.4</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.07</X><Y>2.6</Y><Z>-0.2</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX9"><Properties>
+<string name="Name">StripeR</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4293978326</Color3uint8>
+<Vector3 name="size"><X>0.16</X><Y>0.2</Y><Z>1.4</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.07</X><Y>2.6</Y><Z>-0.2</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX10"><Properties>
+<string name="Name">Wheel0</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4279834908</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>2.0</Y><Z>2.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.4</X><Y>1.0</Y><Z>-1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX11"><Properties>
+<string name="Name">Hub0</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.7</X><Y>1.0</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.42</X><Y>1.0</Y><Z>-1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX12"><Properties>
+<string name="Name">Wheel1</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4279834908</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>2.0</Y><Z>2.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.4</X><Y>1.0</Y><Z>-1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX13"><Properties>
+<string name="Name">Hub1</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.7</X><Y>1.0</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.42</X><Y>1.0</Y><Z>-1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX14"><Properties>
+<string name="Name">Wheel2</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4279834908</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>2.0</Y><Z>2.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.4</X><Y>1.0</Y><Z>1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX15"><Properties>
+<string name="Name">Hub2</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.7</X><Y>1.0</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.42</X><Y>1.0</Y><Z>1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX16"><Properties>
+<string name="Name">Wheel3</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4279834908</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>2.0</Y><Z>2.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.4</X><Y>1.0</Y><Z>1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX17"><Properties>
+<string name="Name">Hub3</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>0.7</X><Y>1.0</Y><Z>1.0</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.42</X><Y>1.0</Y><Z>1.7</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX18"><Properties>
+<string name="Name">Brush</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>4.6</X><Y>1.1</Y><Z>1.1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>0.65</Y><Z>-3.4</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX19"><Properties>
+<string name="Name">BrushGuard</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4280438356</Color3uint8>
+<Vector3 name="size"><X>4.8</X><Y>0.35</Y><Z>0.5</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>1.5</Y><Z>-3.0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX20"><Properties>
+<string name="Name">BrushArmL</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4288060325</Color3uint8>
+<Vector3 name="size"><X>0.3</X><Y>0.3</Y><Z>0.3</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>2.3</X><Y>1.0</Y><Z>-3.0</Z><R00>0.00000</R00><R01>0.00000</R01><R02>1.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>-1.00000</R20><R21>0.00000</R21><R22>0.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX21"><Properties>
+<string name="Name">BrushArmR</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4288060325</Color3uint8>
+<Vector3 name="size"><X>0.3</X><Y>0.3</Y><Z>0.3</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-2.3</X><Y>1.0</Y><Z>-3.0</Z><R00>0.00000</R00><R01>0.00000</R01><R02>1.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>-1.00000</R20><R21>0.00000</R21><R22>0.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX22"><Properties>
+<string name="Name">LightL</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">0</token><token name="Material">288</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294958160</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>0.6</Y><Z>0.3</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>1.2</X><Y>2.5</Y><Z>-3.0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX23"><Properties>
+<string name="Name">LightR</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">0</token><token name="Material">288</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294958160</Color3uint8>
+<Vector3 name="size"><X>0.6</X><Y>0.6</Y><Z>0.3</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-1.2</X><Y>2.5</Y><Z>-3.0</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX24"><Properties>
+<string name="Name">HandlePole</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">1088</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4288060325</Color3uint8>
+<Vector3 name="size"><X>0.25</X><Y>0.25</Y><Z>4.5</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>4.1</Y><Z>3.9</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>0.86603</R11><R12>0.50000</R12><R20>0.00000</R20><R21>-0.50000</R21><R22>0.86603</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX25"><Properties>
+<string name="Name">HandleGrip</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">2</token><token name="Material">272</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4279834908</Color3uint8>
+<Vector3 name="size"><X>2.2</X><Y>0.35</Y><Z>0.35</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>6.1</Y><Z>5.3</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX26"><Properties>
+<string name="Name">HandleBase</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">1088</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4288060325</Color3uint8>
+<Vector3 name="size"><X>0.8</X><Y>0.5</Y><Z>0.8</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>3.2</Y><Z>2.6</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+<Item class="Part" referent="RBX27"><Properties>
+<string name="Name">Dust bin</string><bool name="Anchored">true</bool>
+<bool name="CanCollide">true</bool>
+<float name="Transparency">0</float>
+<token name="Shape">1</token><token name="Material">256</token>
+<token name="TopSurface">0</token>
+<token name="BottomSurface">0</token>
+<token name="LeftSurface">0</token>
+<token name="RightSurface">0</token>
+<token name="FrontSurface">0</token>
+<token name="BackSurface">0</token>
+<Color3uint8 name="Color3uint8">4294937630</Color3uint8>
+<Vector3 name="size"><X>2.2</X><Y>0.9</Y><Z>1.4</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>0</X><Y>3.0</Y><Z>0.3</Z><R00>1.00000</R00><R01>0.00000</R01><R02>0.00000</R02><R10>0.00000</R10><R11>1.00000</R11><R12>0.00000</R12><R20>0.00000</R20><R21>0.00000</R21><R22>1.00000</R22></CoordinateFrame>
+</Properties>
+</Item>
+</Item></roblox>

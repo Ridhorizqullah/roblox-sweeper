@@ -1,6 +1,7 @@
 --!strict
 local Players = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
+local Layout = require(RS.Shared.config.Layout)
 local Planets = require(RS.Shared.config.Planets)
 local Cleaning = require(RS.Shared.config.Cleaning)
 local World = require(script.Parent.WorldService)
@@ -21,17 +22,39 @@ function Service.Init(): ()
 			local definition = Planets.ById[targetId]
 			local portal = Instance.new("Part")
 			portal.Name = "Portal_" .. targetId
-			portal.Size = Planets.Portal.Size
-			portal.Position = source.Position + Planets.Portal.Offset + Vector3.new(0, 0, slot * Planets.Portal.Spacing)
+			portal.Size = Layout.Portal.Size
+			portal.CFrame = Layout.GetCFrame(source.Position, Layout.Portal.Center + Vector2.new(slot * (Layout.Portal.Spacing or 14), 0), Layout.Portal.Size, true)
 			portal.Anchored = true
 			portal.Material = Enum.Material.Neon
 			portal.Color = definition.dirtColor
 			portal.Parent = source.Parent
 			slot += 1
+
+			local billboard = Instance.new("BillboardGui")
+			billboard.Name = "Instructions"
+			billboard.Size = UDim2.fromOffset(240, 56)
+			billboard.StudsOffset = Layout.Portal.StudsOffset
+			billboard.MaxDistance = 40
+			billboard.AlwaysOnTop = true
+			billboard.Adornee = portal
+
+			local label = Instance.new("TextLabel")
+			label.Size = UDim2.fromScale(1, 1)
+			label.BackgroundTransparency = 1
+			label.Text = "PORTAL: " .. definition.name:upper() .. "\n$" .. definition.unlockPrice
+			label.TextColor3 = Color3.fromRGB(255, 255, 255)
+			label.TextStrokeTransparency = 0.2
+			label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
+			label.TextSize = 15
+			label.TextWrapped = true
+			label.Font = Enum.Font.GothamBold
+			label.Parent = billboard
+			billboard.Parent = portal
+
 			local prompt = Instance.new("ProximityPrompt")
 			prompt.ActionText = "Travel / unlock $" .. definition.unlockPrice
 			prompt.ObjectText = definition.name .. " (owned: free)"
-			prompt.MaxActivationDistance = Planets.Portal.Radius
+			prompt.MaxActivationDistance = Layout.Portal.MaxDistance
 			prompt.HoldDuration = Planets.Portal.HoldSeconds
 			prompt.RequiresLineOfSight = false
 			prompt.Parent = portal
