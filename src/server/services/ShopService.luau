@@ -11,38 +11,36 @@ local Vehicles = require(config.Vehicles)
 local DataService = require(script.Parent.DataService)
 local State = require(script.Parent.PlayerStateService)
 local ToolService = require(script.Parent.ToolService)
+local OutpostBuilder = require(ReplicatedStorage.Shared.art.OutpostBuilder)
 local Service = {}
 local lastRequest: {[Player]: number} = {}
 local initialized = false
 function Service.Init(): ()
 	if initialized then return end
 	initialized = true
-	local station = Instance.new("Part")
+	local shopCF = Layout.GetCFrame(Cleaning.Origin, Layout.Shop.Center, Layout.Shop.Size, true)
+	local shopModel = OutpostBuilder.BuildShopKiosk(workspace:WaitForChild("PlanetSweepersWorld"), shopCF)
+	local station = shopModel.PrimaryPart :: BasePart
 	station.Name = "ShopStation"
-	station.Anchored = true
-	station.Size = Layout.Shop.Size
-	station.CFrame = Layout.GetCFrame(Cleaning.Origin, Layout.Shop.Center, Layout.Shop.Size, true)
-	station.Color = Shop.Color
-	station.Parent = workspace:WaitForChild("PlanetSweepersWorld")
 
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "Instructions"
-	billboard.Size = UDim2.fromOffset(220, 56)
+	billboard.Size = UDim2.fromOffset(180, 40)
 	billboard.StudsOffset = Layout.Shop.StudsOffset
-	billboard.MaxDistance = 40
+	billboard.MaxDistance = Layout.Shop.MaxDistance
 	billboard.AlwaysOnTop = true
 	billboard.Adornee = station
 
 	local label = Instance.new("TextLabel")
 	label.Size = UDim2.fromScale(1, 1)
 	label.BackgroundTransparency = 1
-	label.Text = "EQUIPMENT KIOSK\nTools, Bags & Robots"
+	label.Text = Layout.Shop.ShortTitle
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
-	label.TextStrokeTransparency = 0.2
+	label.TextStrokeTransparency = 0.15
 	label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
-	label.TextSize = 15
-	label.TextWrapped = true
-	label.Font = Enum.Font.GothamBold
+	label.TextSize = 18
+	label.TextWrapped = false
+	label.Font = Enum.Font.GothamBlack
 	label.Parent = billboard
 	billboard.Parent = station
 
@@ -51,7 +49,7 @@ function Service.Init(): ()
 	remote.Parent = ReplicatedStorage
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = Layout.Shop.PromptAction
-	prompt.ObjectText = Layout.Shop.PromptObject
+	prompt.ObjectText = ""
 	prompt.MaxActivationDistance = Layout.Shop.MaxDistance
 	prompt.RequiresLineOfSight = false
 	prompt.Parent = station

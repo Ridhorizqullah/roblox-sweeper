@@ -1,11 +1,10 @@
 --!strict
 -- OutpostBuilder.luau
--- Procedurally constructs lunar outpost buildings (Central Habitat, Solar Arrays, Tanks, Conduits)
--- exactly reflecting the visual style in REFERENSI ASET (Screenshots 2, 3, 7).
+-- Procedurally constructs lunar outpost buildings, stations, and kiosks
+-- compliant with AGENTS.md art pass rules and part budgets (all <= 40 parts).
 
 local RS = game:GetService("ReplicatedStorage")
 local Palette = require(RS.Shared.config.Palette)
-local Assets = require(RS.Shared.config.Assets)
 
 local Builder = {}
 
@@ -35,111 +34,209 @@ local function createPart(
 	return part
 end
 
--- Builds the central modular habitat station (Screenshots 2 & 7)
-function Builder.BuildCentralHabitat(parent: Instance, center: Vector3): Model
+-- =========================================================================
+-- STATIONS (Requirement 6: Under 40 parts each, 8-12 studs tall max)
+-- =========================================================================
+
+-- 1. Sell Station: White base, teal trim, orange glowing pad, floating "SELL" sign
+function Builder.BuildSellStation(parent: Instance, cf: CFrame): Model
 	local model = Instance.new("Model")
-	model.Name = "CentralHabitatStation"
+	model.Name = "SellStation"
 
-	local groundY = center.Y
-	local hubPos = center + Vector3.new(0, 0, -50)
+	-- Main interactive Root Part (invisible or matches bounding box)
+	local root = Instance.new("Part")
+	root.Name = "StationRoot"
+	root.Size = Vector3.new(10, 8, 10)
+	root.CFrame = cf
+	root.Transparency = 1
+	root.Anchored = true
+	root.CanCollide = false
+	root.CanTouch = true
+	root.CanQuery = true
+	root.Parent = model
+	model.PrimaryPart = root
 
-	-- Base Foundation
-	createPart("Foundation", model, Vector3.new(38, 1.5, 32), CFrame.new(hubPos + Vector3.new(0, 0.75, 0)), Palette.StationDark)
+	-- Foundation: Clean White Base
+	createPart("BaseWhite", model, Vector3.new(10, 1.2, 10), cf * CFrame.new(0, -3.4, 0), Palette.StationWhite)
 
-	-- Main Body (Rounded/chamfered modular building)
-	createPart("MainBodyCenter", model, Vector3.new(34, 16, 26), CFrame.new(hubPos + Vector3.new(0, 9.5, 0)), Palette.StationWhite)
-	createPart("MainBodyWingL", model, Vector3.new(10, 14, 20), CFrame.new(hubPos + Vector3.new(-18, 8.5, 0)), Palette.StationWhite)
-	createPart("MainBodyWingR", model, Vector3.new(10, 14, 20), CFrame.new(hubPos + Vector3.new(18, 8.5, 0)), Palette.StationWhite)
+	-- Teal Trim Borders around the base
+	createPart("TrimL", model, Vector3.new(0.6, 1.3, 10.2), cf * CFrame.new(-4.8, -3.35, 0), Palette.StationTeal)
+	createPart("TrimR", model, Vector3.new(0.6, 1.3, 10.2), cf * CFrame.new(4.8, -3.35, 0), Palette.StationTeal)
+	createPart("TrimF", model, Vector3.new(9.6, 1.3, 0.6), cf * CFrame.new(0, -3.35, 4.8), Palette.StationTeal)
+	createPart("TrimB", model, Vector3.new(9.6, 1.3, 0.6), cf * CFrame.new(0, -3.35, -4.8), Palette.StationTeal)
 
-	-- Signature Orange Accent Warning Stripes (Screenshots 2, 4, 7)
-	createPart("StripeTop", model, Vector3.new(34.4, 1.2, 26.4), CFrame.new(hubPos + Vector3.new(0, 15, 0)), Palette.AccentOrange)
-	createPart("StripeMid", model, Vector3.new(34.4, 0.8, 26.4), CFrame.new(hubPos + Vector3.new(0, 5, 0)), Palette.AccentOrange)
+	-- Center: Orange Glowing Recycling Pad
+	local pad = createPart("GlowingPad", model, Vector3.new(6.5, 0.4, 6.5), cf * CFrame.new(0, -2.7, 0), Palette.AccentOrange, nil, Enum.Material.Neon)
 
-	-- Vertical Cyan Observation Windows (Screenshots 2 & 7)
-	for i = -2, 2 do
-		if i ~= 0 then
-			createPart("WindowF_" .. i, model, Vector3.new(2.4, 7, 0.4), CFrame.new(hubPos + Vector3.new(i * 6.5, 9.5, 13.2)), Palette.AccentTeal, nil, Enum.Material.Neon)
+	-- Hopper Chute back wall
+	createPart("HopperWall", model, Vector3.new(8, 4.5, 1.5), cf * CFrame.new(0, -0.6, -3.8), Palette.StationWhite)
+	createPart("HopperStripe", model, Vector3.new(8.2, 0.8, 1.6), cf * CFrame.new(0, 1.2, -3.8), Palette.StationTeal)
+
+	-- Four Corner Lighting Pylons
+	for _, xSign in {-1, 1} do
+		for _, zSign in {-1, 1} do
+			local pylonCF = cf * CFrame.new(xSign * 4.4, -1.5, zSign * 4.4)
+			createPart("Pylon", model, Vector3.new(0.8, 4.5, 0.8), pylonCF, Palette.StationDark)
+			createPart("PylonBeacon", model, Vector3.new(0.9, 0.6, 0.9), pylonCF * CFrame.new(0, 2.4, 0), Palette.BeaconAmber, Enum.PartType.Ball, Enum.Material.Neon)
 		end
 	end
-
-	-- Airlock Entrance (Center Front)
-	createPart("AirlockFrame", model, Vector3.new(7, 8, 2), CFrame.new(hubPos + Vector3.new(0, 5, 13.5)), Palette.StationDark)
-	createPart("AirlockDoor", model, Vector3.new(5, 6.5, 0.8), CFrame.new(hubPos + Vector3.new(0, 4.5, 14)), Palette.AirlockDoor)
-	createPart("AirlockStripe", model, Vector3.new(5.2, 0.6, 1), CFrame.new(hubPos + Vector3.new(0, 8.2, 13.6)), Palette.AccentOrange)
-	createPart("AirlockLight", model, Vector3.new(1.2, 0.4, 0.4), CFrame.new(hubPos + Vector3.new(0, 9.2, 14.2)), Palette.AccentTeal, nil, Enum.Material.Neon)
-
-	-- Roof Comms Antenna & Radar Dish
-	createPart("RoofMast", model, Vector3.new(1, 8, 1), CFrame.new(hubPos + Vector3.new(0, 21.5, 0)), Palette.MetalPipes)
-	createPart("RoofDish", model, Vector3.new(5, 1, 5), CFrame.new(hubPos + Vector3.new(0, 25.5, 0)) * CFrame.Angles(0.3, 0.4, 0), Palette.StationWhite, Enum.PartType.Cylinder)
-	createPart("RoofBeacon", model, Vector3.new(0.8, 0.8, 0.8), CFrame.new(hubPos + Vector3.new(0, 26.5, 0)), Palette.BeaconAmber, Enum.PartType.Ball, Enum.Material.Neon)
 
 	model.Parent = parent
 	return model
 end
 
--- Builds angled solar panel arrays on mounts (Screenshots 2 & 3)
+-- 2. Shop Kiosk: White booth with teal screen, floating "SHOP" sign
+function Builder.BuildShopKiosk(parent: Instance, cf: CFrame): Model
+	local model = Instance.new("Model")
+	model.Name = "ShopStation"
+
+	local root = Instance.new("Part")
+	root.Name = "ShopRoot"
+	root.Size = Vector3.new(8, 9, 7)
+	root.CFrame = cf
+	root.Transparency = 1
+	root.Anchored = true
+	root.CanCollide = false
+	root.CanTouch = true
+	root.CanQuery = true
+	root.Parent = model
+	model.PrimaryPart = root
+
+	-- Booth Body: Clean White
+	createPart("BasePlinth", model, Vector3.new(8, 0.8, 7), cf * CFrame.new(0, -4.1, 0), Palette.StationDark)
+	createPart("BackWall", model, Vector3.new(8, 7.5, 1.2), cf * CFrame.new(0, 0, -2.6), Palette.StationWhite)
+	createPart("SideL", model, Vector3.new(1.2, 7.5, 5.5), cf * CFrame.new(-3.4, 0, -0.4), Palette.StationWhite)
+	createPart("SideR", model, Vector3.new(1.2, 7.5, 5.5), cf * CFrame.new(3.4, 0, -0.4), Palette.StationWhite)
+
+	-- Counter Desk & Trim
+	createPart("CounterDesk", model, Vector3.new(6, 2.8, 1.6), cf * CFrame.new(0, -2.4, 1.6), Palette.StationWhite)
+	createPart("DeskTop", model, Vector3.new(6.4, 0.4, 2.0), cf * CFrame.new(0, -0.8, 1.6), Palette.StationTeal)
+
+	-- Overhead Canopy
+	createPart("Canopy", model, Vector3.new(8.4, 0.8, 7.4), cf * CFrame.new(0, 3.8, 0.2), Palette.StationWhite)
+	createPart("CanopyTrim", model, Vector3.new(8.6, 0.4, 7.6), cf * CFrame.new(0, 3.6, 0.2), Palette.StationTeal)
+
+	-- Glowing Teal Digital Screen
+	createPart("MonitorFrame", model, Vector3.new(5, 3.2, 0.4), cf * CFrame.new(0, 0.8, -1.8), Palette.StationDark)
+	createPart("TealScreen", model, Vector3.new(4.6, 2.8, 0.2), cf * CFrame.new(0, 0.8, -1.5), Palette.AccentTeal, nil, Enum.Material.Neon)
+
+	model.Parent = parent
+	return model
+end
+
+-- 3. Pets Kiosk: White booth with purple-pink screen, floating "PETS" sign
+function Builder.BuildPetsKiosk(parent: Instance, cf: CFrame): Model
+	local model = Instance.new("Model")
+	model.Name = "PetsDailyKiosk"
+
+	local root = Instance.new("Part")
+	root.Name = "KioskRoot"
+	root.Size = Vector3.new(8, 9, 7)
+	root.CFrame = cf
+	root.Transparency = 1
+	root.Anchored = true
+	root.CanCollide = false
+	root.CanTouch = true
+	root.CanQuery = true
+	root.Parent = model
+	model.PrimaryPart = root
+
+	-- Booth Body: Clean White
+	createPart("BasePlinth", model, Vector3.new(8, 0.8, 7), cf * CFrame.new(0, -4.1, 0), Palette.StationDark)
+	createPart("BackWall", model, Vector3.new(8, 7.5, 1.2), cf * CFrame.new(0, 0, -2.6), Palette.StationWhite)
+	createPart("SideL", model, Vector3.new(1.2, 7.5, 5.5), cf * CFrame.new(-3.4, 0, -0.4), Palette.StationWhite)
+	createPart("SideR", model, Vector3.new(1.2, 7.5, 5.5), cf * CFrame.new(3.4, 0, -0.4), Palette.StationWhite)
+
+	-- Counter Desk & Purple Trim
+	createPart("CounterDesk", model, Vector3.new(6, 2.8, 1.6), cf * CFrame.new(0, -2.4, 1.6), Palette.StationWhite)
+	createPart("DeskTop", model, Vector3.new(6.4, 0.4, 2.0), cf * CFrame.new(0, -0.8, 1.6), Palette.StationPurple)
+
+	-- Overhead Canopy with cute arch
+	createPart("Canopy", model, Vector3.new(8.4, 0.8, 7.4), cf * CFrame.new(0, 3.8, 0.2), Palette.StationWhite)
+	createPart("CanopyTrim", model, Vector3.new(8.6, 0.4, 7.6), cf * CFrame.new(0, 3.6, 0.2), Palette.StationPurple)
+
+	-- Glowing Purple-Pink Digital Screen
+	createPart("MonitorFrame", model, Vector3.new(5, 3.2, 0.4), cf * CFrame.new(0, 0.8, -1.8), Palette.StationDark)
+	createPart("PurpleScreen", model, Vector3.new(4.6, 2.8, 0.2), cf * CFrame.new(0, 0.8, -1.5), Palette.StationPurple, nil, Enum.Material.Neon)
+
+	-- Cute Antenna Spheres
+	createPart("AntennaL", model, Vector3.new(0.6, 1.8, 0.6), cf * CFrame.new(-2.5, 4.8, 0.2), Palette.MetalPipes, Enum.PartType.Cylinder)
+	createPart("AntennaR", model, Vector3.new(0.6, 1.8, 0.6), cf * CFrame.new(2.5, 4.8, 0.2), Palette.MetalPipes, Enum.PartType.Cylinder)
+	createPart("AntennaSphereL", model, Vector3.new(1.2, 1.2, 1.2), cf * CFrame.new(-2.5, 5.8, 0.2), Palette.StationPurple, Enum.PartType.Ball, Enum.Material.Neon)
+	createPart("AntennaSphereR", model, Vector3.new(1.2, 1.2, 1.2), cf * CFrame.new(2.5, 5.8, 0.2), Palette.StationPurple, Enum.PartType.Ball, Enum.Material.Neon)
+
+	model.Parent = parent
+	return model
+end
+
+-- =========================================================================
+-- OUTPOST DECOR & BACKGROUND
+-- =========================================================================
+
+-- Builds small decorative gray lunar rocks under 6 studs (Requirement 5)
+function Builder.BuildLunarRocks(parent: Instance, center: Vector3): Model
+	local model = Instance.new("Model")
+	model.Name = "DecorativeRocks"
+
+	local rockOffsets = {
+		Vector3.new(-46, 0, -22),
+		Vector3.new(-50, 0, -26),
+		Vector3.new(-43, 0, -30),
+		Vector3.new(-53, 0, -18),
+	}
+
+	for i, offset in ipairs(rockOffsets) do
+		local size = Vector3.new(3.8 - (i * 0.4), 2.2 - (i * 0.2), 3.4 - (i * 0.3)) -- All < 6 studs
+		local cf = CFrame.new(center + offset + Vector3.new(0, size.Y / 2, 0)) * CFrame.Angles(0.2 * i, 0.5 * i, 0)
+		createPart("Rock_" .. i, model, size, cf, Palette.PebbleDark, Enum.PartType.Block, Enum.Material.Slate)
+	end
+
+	model.Parent = parent
+	return model
+end
+
+-- Solar Panel Array (background decor, far out)
 function Builder.BuildSolarArray(parent: Instance, center: Vector3): Model
 	local model = Instance.new("Model")
 	model.Name = "SolarPanelArray"
 
-	local basePos = center + Vector3.new(52, 0, -28)
+	local basePos = center + Vector3.new(58, 0, -32)
 	local tilt = CFrame.Angles(-math.rad(28), math.rad(15), 0)
 
-	-- Hexagonal Foundation Platform
-	createPart("SolarPlatform", model, Vector3.new(16, 0.8, 16), CFrame.new(basePos + Vector3.new(0, 0.4, 0)), Palette.StationDark)
-	createPart("PlatformStripe", model, Vector3.new(16.4, 0.2, 16.4), CFrame.new(basePos + Vector3.new(0, 0.8, 0)), Palette.AccentOrange)
+	createPart("SolarPlatform", model, Vector3.new(14, 0.8, 14), CFrame.new(basePos + Vector3.new(0, 0.4, 0)), Palette.StationDark)
+	createPart("Pylon", model, Vector3.new(2, 5.5, 2), CFrame.new(basePos + Vector3.new(0, 3.5, 0)), Palette.StationWhite)
 
-	-- Central Mounting Pylon
-	createPart("Pylon", model, Vector3.new(2.4, 6, 2.4), CFrame.new(basePos + Vector3.new(0, 3.8, 0)), Palette.StationWhite)
-	createPart("StatusLight", model, Vector3.new(0.6, 1.2, 2.5), CFrame.new(basePos + Vector3.new(0, 3.8, 0)), Palette.AccentTeal, nil, Enum.Material.Neon)
-
-	-- Solar Panel Frame & Photovoltaic Grid
-	local panelCenter = basePos + Vector3.new(0, 7.5, 0)
-	local frame = createPart("PanelFrame", model, Vector3.new(15, 0.6, 10), CFrame.new(panelCenter) * tilt, Palette.StationDark)
-	local cells = createPart("SolarCells", model, Vector3.new(14.2, 0.2, 9.2), frame.CFrame * CFrame.new(0, 0.35, 0), Palette.SolarBlue, nil, Enum.Material.SmoothPlastic)
-
-	-- Grid Lines on Solar Array
-	createPart("SolarDividerH", model, Vector3.new(14.3, 0.25, 0.3), cells.CFrame, Palette.MetalPipes)
-	createPart("SolarDividerV", model, Vector3.new(0.3, 0.25, 9.3), cells.CFrame, Palette.MetalPipes)
+	local panelCenter = basePos + Vector3.new(0, 6.8, 0)
+	local frame = createPart("PanelFrame", model, Vector3.new(14, 0.6, 9), CFrame.new(panelCenter) * tilt, Palette.StationDark)
+	createPart("SolarCells", model, Vector3.new(13.2, 0.2, 8.2), frame.CFrame * CFrame.new(0, 0.35, 0), Palette.SolarBlue)
 
 	model.Parent = parent
 	return model
 end
 
--- Builds the pressurized life-support / storage tank with dial & conduits (Screenshots 2 & 3)
-function Builder.BuildStorageTank(parent: Instance, center: Vector3): Model
+-- Main Central Modular Habitat (background decor, far out)
+function Builder.BuildCentralHabitat(parent: Instance, center: Vector3): Model
 	local model = Instance.new("Model")
-	model.Name = "OutpostStorageTank"
+	model.Name = "CentralHabitatStation"
 
-	local tankPos = center + Vector3.new(-50, 0, -28)
+	local hubPos = center + Vector3.new(0, 0, -65)
 
-	-- Cradle Supports
-	createPart("CradleL", model, Vector3.new(3, 4, 8), CFrame.new(tankPos + Vector3.new(-7, 2, 0)), Palette.StationDark)
-	createPart("CradleR", model, Vector3.new(3, 4, 8), CFrame.new(tankPos + Vector3.new(7, 2, 0)), Palette.StationDark)
+	createPart("Foundation", model, Vector3.new(34, 1.5, 28), CFrame.new(hubPos + Vector3.new(0, 0.75, 0)), Palette.StationDark)
+	createPart("MainBodyCenter", model, Vector3.new(30, 14, 24), CFrame.new(hubPos + Vector3.new(0, 8.5, 0)), Palette.StationWhite)
+	createPart("StripeTop", model, Vector3.new(30.4, 1.0, 24.4), CFrame.new(hubPos + Vector3.new(0, 13.5, 0)), Palette.AccentOrange)
 
-	-- Main Tank Cylinder
-	local tankBody = createPart("TankBody", model, Vector3.new(18, 7, 7), CFrame.new(tankPos + Vector3.new(0, 5.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Palette.StationWhite, Enum.PartType.Cylinder)
+	for i = -2, 2 do
+		if i ~= 0 then
+			createPart("Window_" .. i, model, Vector3.new(2, 6, 0.4), CFrame.new(hubPos + Vector3.new(i * 6, 8.5, 12.2)), Palette.AccentTeal, nil, Enum.Material.Neon)
+		end
+	end
 
-	-- End Caps
-	createPart("EndCapL", model, Vector3.new(7, 7, 7), CFrame.new(tankPos + Vector3.new(-9, 5.5, 0)), Palette.StationWhite, Enum.PartType.Ball)
-	createPart("EndCapR", model, Vector3.new(7, 7, 7), CFrame.new(tankPos + Vector3.new(9, 5.5, 0)), Palette.StationWhite, Enum.PartType.Ball)
-
-	-- Orange Warning Ring Bands
-	createPart("RingL", model, Vector3.new(1, 7.3, 7.3), CFrame.new(tankPos + Vector3.new(-4, 5.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Palette.AccentOrange, Enum.PartType.Cylinder)
-	createPart("RingR", model, Vector3.new(1, 7.3, 7.3), CFrame.new(tankPos + Vector3.new(4, 5.5, 0)) * CFrame.Angles(0, 0, math.rad(90)), Palette.AccentOrange, Enum.PartType.Cylinder)
-
-	-- Pressure Gauge Dial (Screenshot 3)
-	local dial = createPart("PressureGauge", model, Vector3.new(2.4, 0.4, 2.4), CFrame.new(tankPos + Vector3.new(-7, 7.5, 3.6)) * CFrame.Angles(math.rad(90), 0, 0), Palette.StationWhite, Enum.PartType.Cylinder)
-	createPart("GaugeNeedle", model, Vector3.new(0.2, 0.45, 1.2), dial.CFrame * CFrame.new(0, 0.05, 0), Palette.AccentOrange)
-
-	-- Supply Pipe Conduit running toward the Central Habitat
-	createPart("PipeSegment1", model, Vector3.new(1.2, 1.2, 22), CFrame.new(tankPos + Vector3.new(0, 1.2, -11)), Palette.MetalPipes, Enum.PartType.Cylinder)
+	createPart("AirlockDoor", model, Vector3.new(4.5, 6, 0.8), CFrame.new(hubPos + Vector3.new(0, 4, 12.5)), Palette.AirlockDoor or Color3.fromRGB(75, 80, 95))
 
 	model.Parent = parent
 	return model
 end
 
--- Builds all outpost structures for the starter moonlet
 function Builder.BuildOutpost(parent: Instance, center: Vector3): ()
 	local container = Instance.new("Folder")
 	container.Name = "OutpostStructures"
@@ -147,7 +244,7 @@ function Builder.BuildOutpost(parent: Instance, center: Vector3): ()
 
 	Builder.BuildCentralHabitat(container, center)
 	Builder.BuildSolarArray(container, center)
-	Builder.BuildStorageTank(container, center)
+	Builder.BuildLunarRocks(container, center)
 end
 
 return Builder

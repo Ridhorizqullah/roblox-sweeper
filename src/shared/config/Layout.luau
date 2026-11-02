@@ -11,6 +11,7 @@ export type ObjectConfig = {
 	Size: Vector3,          -- (X, Y, Z) bounding size
 	LookAtCenter: boolean,  -- Whether the object faces (0, 0)
 	MinRadius: number,      -- Clearance radius for collision/spacing checks
+	ShortTitle: string,     -- Single short title (SELL, SHOP, PETS, PORTAL)
 	PromptAction: string,
 	PromptObject: string,
 	StudsOffset: Vector3,
@@ -30,9 +31,9 @@ local Layout = {
 	Origin = Vector3.new(0, 100, 0),
 
 	-- Validation thresholds
-	ClearanceDistance = 8,  -- Minimum clear walking space between objects (studs)
-	MaxGroundFloat = 0.5,   -- Max allowable deviation from ground height (studs)
-	ShowDebugGizmos = true, -- Auto-generate visual boxes in Studio
+	ClearanceDistance = 8,   -- Minimum clear walking space between objects (studs)
+	MaxGroundFloat = 0.5,    -- Max allowable deviation from ground height (studs)
+	ShowDebugGizmos = false, -- Studio-only toggle: OFF BY DEFAULT
 
 	-- 1. Base / Spawn center: (0, 0)
 	Base = {
@@ -40,58 +41,64 @@ local Layout = {
 		Size = Vector3.new(10, 1, 10),
 		LookAtCenter = false,
 		MinRadius = 5.0,
+		ShortTitle = "BASE",
 		PromptAction = "",
-		PromptObject = "Spawn Platform",
+		PromptObject = "",
 		StudsOffset = Vector3.new(0, 4, 0),
-		MaxDistance = 40,
+		MaxDistance = 35,
 	} :: ObjectConfig,
 
-	-- 2. Sell Station: (15, 0), faces the center
+	-- 2. Sell Station: (28, 0), faces the center (>= 25 studs from base, 8-12 studs tall)
 	Sell = {
-		Center = Vector2.new(15, 0),
-		Size = Vector3.new(8, 4, 8),
-		LookAtCenter = true,
-		MinRadius = 4.5,
-		PromptAction = "Sell bag contents",
-		PromptObject = "Recycler Station",
-		StudsOffset = Vector3.new(0, 6, 0),
-		MaxDistance = 25,
-	} :: ObjectConfig,
-
-	-- 3. Shop Kiosk: (-15, 0), faces the center
-	Shop = {
-		Center = Vector2.new(-15, 0),
-		Size = Vector3.new(6, 4, 6),
-		LookAtCenter = true,
-		MinRadius = 3.5,
-		PromptAction = "Open Shop",
-		PromptObject = "Equipment Kiosk",
-		StudsOffset = Vector3.new(0, 6, 0),
-		MaxDistance = 25,
-	} :: ObjectConfig,
-
-	-- 4. Pets / Daily Reward Kiosk: (0, 18), faces the center
-	Kiosk = {
-		Center = Vector2.new(0, 18),
-		Size = Vector3.new(6, 4, 6),
-		LookAtCenter = true,
-		MinRadius = 3.5,
-		PromptAction = "Interact",
-		PromptObject = "Pets & Daily Kiosk",
-		StudsOffset = Vector3.new(0, 6, 0),
-		MaxDistance = 25,
-	} :: ObjectConfig,
-
-	-- 5. Portal to next planet: (0, -120), faces the base
-	Portal = {
-		Center = Vector2.new(0, -120),
-		Size = Vector3.new(8, 12, 4),
+		Center = Vector2.new(28, 0),
+		Size = Vector3.new(10, 8, 10),
 		LookAtCenter = true,
 		MinRadius = 5.0,
+		ShortTitle = "SELL",
+		PromptAction = "Sell bag contents",
+		PromptObject = "Recycler",
+		StudsOffset = Vector3.new(0, 6.0, 0),
+		MaxDistance = 35,
+	} :: ObjectConfig,
+
+	-- 3. Shop Kiosk: (-28, 0), faces the center (>= 25 studs from base, 8-12 studs tall)
+	Shop = {
+		Center = Vector2.new(-28, 0),
+		Size = Vector3.new(8, 9, 7),
+		LookAtCenter = true,
+		MinRadius = 4.0,
+		ShortTitle = "SHOP",
+		PromptAction = "Open Shop",
+		PromptObject = "Equipment",
+		StudsOffset = Vector3.new(0, 6.5, 0),
+		MaxDistance = 35,
+	} :: ObjectConfig,
+
+	-- 4. Pets / Daily Reward Kiosk: (0, 28), faces the center (>= 25 studs from base, 8-12 studs tall)
+	Kiosk = {
+		Center = Vector2.new(0, 28),
+		Size = Vector3.new(8, 9, 7),
+		LookAtCenter = true,
+		MinRadius = 4.0,
+		ShortTitle = "PETS",
+		PromptAction = "Claim Daily / Manage Pets",
+		PromptObject = "Kiosk",
+		StudsOffset = Vector3.new(0, 6.5, 0),
+		MaxDistance = 35,
+	} :: ObjectConfig,
+
+	-- 5. Portal to next planet: (0, -120), faces the base (8-12 studs tall)
+	Portal = {
+		Center = Vector2.new(0, -120),
+		Size = Vector3.new(10, 12, 4),
+		LookAtCenter = true,
+		MinRadius = 5.0,
+		ShortTitle = "PORTAL",
 		PromptAction = "Travel / Unlock",
-		PromptObject = "Planet Portal",
-		StudsOffset = Vector3.new(0, 9, 0),
-		MaxDistance = 25,
+		PromptObject = "Portal",
+		StudsOffset = Vector3.new(0, 9.5, 0),
+		MaxDistance = 35,
+		Spacing = 16,
 	} :: ObjectConfig,
 
 	-- 6. Dust Zones (clean grid alignment, no random scatter)
@@ -133,7 +140,6 @@ local Layout = {
 }
 
 -- Returns the accurate ground Y coordinate using raycasting onto Terrain or Ground parts.
--- Guarantees objects never float or sink.
 function Layout.GetGroundY(worldX: number, worldZ: number, defaultY: number?): number
 	local fallback = defaultY or (Layout.Origin.Y + 2)
 	local rayOrigin = Vector3.new(worldX, fallback + 100, worldZ)
@@ -178,7 +184,6 @@ function Layout.GetZoneGridPositions(worldOrigin: Vector3, targetTotalCount: num
 	local positions: {Vector3} = {}
 	local zoneList = {Layout.DustZones.A, Layout.DustZones.B, Layout.DustZones.C}
 
-	-- Calculate grid points inside each circular zone
 	for _, zone in ipairs(zoneList) do
 		local zoneWorldX = worldOrigin.X + zone.Center.X
 		local zoneWorldZ = worldOrigin.Z + zone.Center.Y
@@ -199,7 +204,6 @@ function Layout.GetZoneGridPositions(worldOrigin: Vector3, targetTotalCount: num
 		end
 	end
 
-	-- If a specific total count is requested (e.g. planet.dirtDensity), pick evenly
 	if targetTotalCount and targetTotalCount > 0 and #positions > targetTotalCount then
 		local result: {Vector3} = {}
 		local stride = #positions / targetTotalCount
@@ -226,7 +230,7 @@ function Layout.Validate(worldOrigin: Vector3?): (boolean, {string})
 		{Name = "Planet Portal", Center = Layout.Portal.Center, Radius = Layout.Portal.MinRadius, Size = Layout.Portal.Size},
 	}
 
-	-- 1. Check walking clearance (min 8 studs clearance)
+	-- 1. Check walking clearance
 	for i = 1, #objects do
 		for j = i + 1, #objects do
 			local a = objects[i]
@@ -242,7 +246,7 @@ function Layout.Validate(worldOrigin: Vector3?): (boolean, {string})
 		end
 	end
 
-	-- 2. Check vertical alignment against ground height (max 0.5 studs float/sink)
+	-- 2. Check vertical alignment against ground height
 	for _, obj in ipairs(objects) do
 		local worldX = origin.X + obj.Center.X
 		local worldZ = origin.Z + obj.Center.Y
@@ -258,7 +262,6 @@ function Layout.Validate(worldOrigin: Vector3?): (boolean, {string})
 		end
 	end
 
-	-- Print diagnostics
 	for _, msg in ipairs(warnings) do
 		warn(msg)
 	end
@@ -272,9 +275,13 @@ function Layout.Validate(worldOrigin: Vector3?): (boolean, {string})
 	return #warnings == 0, warnings
 end
 
--- Requirement 7: Draws visual colored bounding boxes and labels in Studio mode.
+-- Requirement 1 & 7: Studio debug gizmos (OFF BY DEFAULT)
 function Layout.DrawDebugGizmos(parent: Instance, worldOrigin: Vector3?): Folder?
-	if not RunService:IsStudio() then return nil end
+	if not RunService:IsStudio() or not Layout.ShowDebugGizmos then
+		local existing = parent:FindFirstChild("LayoutDebugGizmos")
+		if existing then existing:Destroy() end
+		return nil
+	end
 
 	local existing = parent:FindFirstChild("LayoutDebugGizmos")
 	if existing then existing:Destroy() end
@@ -291,7 +298,7 @@ function Layout.DrawDebugGizmos(parent: Instance, worldOrigin: Vector3?): Folder
 		part.Size = size
 		part.Color = color
 		part.Material = Enum.Material.Neon
-		part.Transparency = 0.7
+		part.Transparency = 0.75
 		part.Anchored = true
 		part.CanCollide = false
 		part.CanTouch = false
@@ -303,66 +310,13 @@ function Layout.DrawDebugGizmos(parent: Instance, worldOrigin: Vector3?): Folder
 		box.Color3 = color
 		box.LineThickness = 0.08
 		box.Parent = part
-
-		local bb = Instance.new("BillboardGui")
-		bb.Size = UDim2.fromOffset(180, 42)
-		bb.StudsOffset = Vector3.new(0, size.Y / 2 + 2.5, 0)
-		bb.AlwaysOnTop = true
-		bb.MaxDistance = 150
-		bb.Parent = part
-
-		local label = Instance.new("TextLabel")
-		label.Size = UDim2.fromScale(1, 1)
-		label.BackgroundTransparency = 1
-		label.TextColor3 = color
-		label.Font = Enum.Font.GothamBold
-		label.TextSize = 13
-		label.TextStrokeTransparency = 0.2
-		label.Text = string.format("%s\n(%.0f, %.0f)", name, cf.Position.X - origin.X, cf.Position.Z - origin.Z)
-		label.Parent = bb
 	end
 
-	-- Object gizmos
-	addBox("Base (0,0)", Layout.GetCFrame(origin, Layout.Base.Center, Layout.Base.Size, false), Layout.Base.Size, Color3.fromRGB(52, 152, 219))
-	addBox("Sell Station (15,0)", Layout.GetCFrame(origin, Layout.Sell.Center, Layout.Sell.Size, true), Layout.Sell.Size, Color3.fromRGB(46, 204, 113))
-	addBox("Shop Kiosk (-15,0)", Layout.GetCFrame(origin, Layout.Shop.Center, Layout.Shop.Size, true), Layout.Shop.Size, Color3.fromRGB(241, 196, 15))
-	addBox("Pets/Daily Kiosk (0,18)", Layout.GetCFrame(origin, Layout.Kiosk.Center, Layout.Kiosk.Size, true), Layout.Kiosk.Size, Color3.fromRGB(155, 89, 182))
-	addBox("Planet Portal (0,-120)", Layout.GetCFrame(origin, Layout.Portal.Center, Layout.Portal.Size, true), Layout.Portal.Size, Color3.fromRGB(231, 76, 60))
-
-	-- Dust Zone circles
-	for key, zone in pairs(Layout.DustZones) do
-		local zcf = Layout.GetCFrame(origin, zone.Center, Vector3.new(zone.Radius * 2, 0.4, zone.Radius * 2), false)
-		local cylinder = Instance.new("Part")
-		cylinder.Name = "Gizmo_Zone_" .. key
-		cylinder.Shape = Enum.PartType.Cylinder
-		cylinder.Size = Vector3.new(0.4, zone.Radius * 2, zone.Radius * 2)
-		cylinder.CFrame = zcf * CFrame.Angles(0, 0, math.rad(90))
-		cylinder.Color = Color3.fromRGB(255, 220, 100)
-		cylinder.Transparency = 0.85
-		cylinder.Material = Enum.Material.Neon
-		cylinder.Anchored = true
-		cylinder.CanCollide = false
-		cylinder.CanTouch = false
-		cylinder.CanQuery = false
-		cylinder.Parent = folder
-
-		local bb = Instance.new("BillboardGui")
-		bb.Size = UDim2.fromOffset(180, 40)
-		bb.StudsOffset = Vector3.new(0, 4, 0)
-		bb.AlwaysOnTop = true
-		bb.MaxDistance = 200
-		bb.Parent = cylinder
-
-		local label = Instance.new("TextLabel")
-		label.Size = UDim2.fromScale(1, 1)
-		label.BackgroundTransparency = 1
-		label.TextColor3 = Color3.fromRGB(255, 230, 120)
-		label.Font = Enum.Font.GothamBold
-		label.TextSize = 14
-		label.TextStrokeTransparency = 0.2
-		label.Text = string.format("%s (r=%.0f)\n(%.0f, %.0f)", zone.Name, zone.Radius, zone.Center.X, zone.Center.Y)
-		label.Parent = bb
-	end
+	addBox("Base", Layout.GetCFrame(origin, Layout.Base.Center, Layout.Base.Size, false), Layout.Base.Size, Color3.fromRGB(52, 152, 219))
+	addBox("Sell", Layout.GetCFrame(origin, Layout.Sell.Center, Layout.Sell.Size, true), Layout.Sell.Size, Color3.fromRGB(46, 204, 113))
+	addBox("Shop", Layout.GetCFrame(origin, Layout.Shop.Center, Layout.Shop.Size, true), Layout.Shop.Size, Color3.fromRGB(241, 196, 15))
+	addBox("Pets", Layout.GetCFrame(origin, Layout.Kiosk.Center, Layout.Kiosk.Size, true), Layout.Kiosk.Size, Color3.fromRGB(155, 89, 182))
+	addBox("Portal", Layout.GetCFrame(origin, Layout.Portal.Center, Layout.Portal.Size, true), Layout.Portal.Size, Color3.fromRGB(231, 76, 60))
 
 	folder.Parent = parent
 	return folder

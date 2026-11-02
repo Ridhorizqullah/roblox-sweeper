@@ -9,6 +9,7 @@ local Game = require(Config:WaitForChild("Game"))
 local Planets = require(Config:WaitForChild("Planets"))
 local Palette = require(Config:WaitForChild("Palette"))
 local WorldLook = require(ReplicatedStorage.Shared.art.WorldLookBuilder)
+local OutpostBuilder = require(ReplicatedStorage.Shared.art.OutpostBuilder)
 
 local Service = {}
 local world: Folder? = nil
@@ -35,9 +36,9 @@ end
 local function addLabel(part: BasePart, text: string, studsOffset: Vector3?, maxDistance: number?): ()
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "Instructions"
-	billboard.Size = UDim2.fromOffset(220, 56)
+	billboard.Size = UDim2.fromOffset(180, 40)
 	billboard.StudsOffset = studsOffset or Vector3.new(0, 5.5, 0)
-	billboard.MaxDistance = maxDistance or 40
+	billboard.MaxDistance = maxDistance or 35
 	billboard.AlwaysOnTop = true
 	billboard.Adornee = part
 
@@ -46,11 +47,11 @@ local function addLabel(part: BasePart, text: string, studsOffset: Vector3?, max
 	label.BackgroundTransparency = 1
 	label.Text = text
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
-	label.TextStrokeTransparency = 0.2
+	label.TextStrokeTransparency = 0.15
 	label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
-	label.TextSize = 15
-	label.TextWrapped = true
-	label.Font = Enum.Font.GothamBold
+	label.TextSize = 18
+	label.TextWrapped = false
+	label.Font = Enum.Font.GothamBlack
 	label.Parent = billboard
 
 	billboard.Parent = part
@@ -124,22 +125,26 @@ function Service.Init(): ()
 	spawn.TopSurface = Enum.SurfaceType.Smooth
 	spawn.BottomSurface = Enum.SurfaceType.Smooth
 	spawn.Parent = folder
-	addLabel(spawn, planet.name .. "\nApproach dust & hold Clean prompt", Layout.Base.StudsOffset, 40)
+	addLabel(spawn, Layout.Base.ShortTitle, Layout.Base.StudsOffset, Layout.Base.MaxDistance)
 
-	-- 3. Sell Station at (15, 0), facing center (0, 0)
+	-- 3. Sell Station at (28, 0), facing center (0, 0)
 	local sellCF = Layout.GetCFrame(Cleaning.Origin, Layout.Sell.Center, Layout.Sell.Size, true)
-	local station = makePart("SellStation", Layout.Sell.Size, sellCF, Cleaning.SellColor, folder)
-	addLabel(station, "RECYCLER STATION\nSell bag contents", Layout.Sell.StudsOffset, 40)
+	local stationModel = OutpostBuilder.BuildSellStation(folder, sellCF)
+	local station = stationModel.PrimaryPart :: BasePart
+	station.Name = "SellStation"
+	addLabel(station, Layout.Sell.ShortTitle, Layout.Sell.StudsOffset, Layout.Sell.MaxDistance)
 
-	-- 4. Pets & Daily Reward Kiosk at (0, 18), facing center (0, 0)
+	-- 4. Pets & Daily Reward Kiosk at (0, 28), facing center (0, 0)
 	local kioskCF = Layout.GetCFrame(Cleaning.Origin, Layout.Kiosk.Center, Layout.Kiosk.Size, true)
-	local kiosk = makePart("PetsDailyKiosk", Layout.Kiosk.Size, kioskCF, Color3.fromRGB(165, 94, 234), folder)
-	addLabel(kiosk, "PETS & DAILY REWARDS\nHub Kiosk", Layout.Kiosk.StudsOffset, 40)
+	local kioskModel = OutpostBuilder.BuildPetsKiosk(folder, kioskCF)
+	local kiosk = kioskModel.PrimaryPart :: BasePart
+	kiosk.Name = "PetsDailyKiosk"
+	addLabel(kiosk, Layout.Kiosk.ShortTitle, Layout.Kiosk.StudsOffset, Layout.Kiosk.MaxDistance)
 
 	-- ProximityPrompt for Kiosk: opens Pets/Daily UI on interaction
 	local kioskPrompt = Instance.new("ProximityPrompt")
-	kioskPrompt.ActionText = "Open Station"
-	kioskPrompt.ObjectText = "Pets & Daily Kiosk"
+	kioskPrompt.ActionText = Layout.Kiosk.PromptAction
+	kioskPrompt.ObjectText = ""
 	kioskPrompt.MaxActivationDistance = Layout.Kiosk.MaxDistance
 	kioskPrompt.RequiresLineOfSight = false
 	kioskPrompt.Parent = kiosk
@@ -207,14 +212,16 @@ function Service.Init(): ()
 		destination:SetAttribute("PlanetId", id)
 		local oldInstructions = destination:FindFirstChild("Instructions")
 		if oldInstructions then oldInstructions:Destroy() end
-		addLabel(destination, definition.name, Layout.Base.StudsOffset, 40)
+		addLabel(destination, definition.name:upper(), Layout.Base.StudsOffset, Layout.Base.MaxDistance)
 		destination.Parent = zone
 		spawns[id] = destination
 
 		local recyclerCF = Layout.GetCFrame(Cleaning.Origin + offset, Layout.Sell.Center, Layout.Sell.Size, true)
-		local recycler = makePart("SellStation", Layout.Sell.Size, recyclerCF, Cleaning.SellColor, zone)
+		local recyclerModel = OutpostBuilder.BuildSellStation(zone, recyclerCF)
+		local recycler = recyclerModel.PrimaryPart :: BasePart
+		recycler.Name = "SellStation"
 		recycler:SetAttribute("PlanetId", id)
-		addLabel(recycler, "RECYCLER STATION", Layout.Sell.StudsOffset, 40)
+		addLabel(recycler, Layout.Sell.ShortTitle, Layout.Sell.StudsOffset, Layout.Sell.MaxDistance)
 		stations[id] = recycler
 
 		buildGuideLines(zone, Cleaning.Origin + offset)

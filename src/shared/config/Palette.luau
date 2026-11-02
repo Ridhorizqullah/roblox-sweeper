@@ -3,34 +3,36 @@
 -- Single source of truth for all visual colors inspired by the lunar space sweeper reference art.
 
 return {
-	-- Lighting & Skybox
-	Ambient = Color3.fromRGB(38, 40, 52),
-	OutdoorAmbient = Color3.fromRGB(28, 30, 40),
-	Space = Color3.fromRGB(6, 6, 12),
-	Tint = Color3.fromRGB(245, 246, 255),
+	-- Lighting & Skybox (Bright Lunar Daylight)
+	Ambient = Color3.fromRGB(115, 110, 130),         -- Mid gray-lavender ambient for high readability
+	OutdoorAmbient = Color3.fromRGB(95, 90, 112),    -- Diffuse lunar bounce light
+	Space = Color3.fromRGB(6, 6, 12),                -- Void of space (pitch black)
+	Tint = Color3.fromRGB(250, 248, 255),            -- Crisp neutral lunar sunlight
 	Stars = Color3.fromRGB(255, 255, 255),
-	Sun = Color3.fromRGB(255, 248, 220),
+	Sun = Color3.fromRGB(255, 248, 220),             -- Strong warm solar glare
 
 	-- Celestial bodies
 	Earth = Color3.fromRGB(40, 120, 220),
 	EarthLand = Color3.fromRGB(55, 150, 80),
 	EarthCloud = Color3.fromRGB(245, 245, 255),
 
-	-- World & Environment
-	Ground = Color3.fromRGB(195, 192, 205),          -- Pale gray-lavender lunar regolith
-	GroundClean = Color3.fromRGB(235, 235, 245),     -- Smooth polished ground revealed after cleaning
-	PebbleDark = Color3.fromRGB(120, 118, 130),       -- Coarse regolith pebbles
-	PebbleLight = Color3.fromRGB(160, 158, 170),      -- Fine surface dust pebbles
+	-- World & Environment (Bright pale gray-lavender ground)
+	Ground = Color3.fromRGB(212, 208, 222),          -- Pale gray-lavender lunar regolith
+	GroundClean = Color3.fromRGB(245, 244, 252),     -- Smooth polished ground revealed after cleaning
+	PebbleDark = Color3.fromRGB(130, 128, 140),       -- Small gray regolith rocks
+	PebbleLight = Color3.fromRGB(175, 172, 185),      -- Fine surface dust pebbles
 	RoadYellow = Color3.fromRGB(250, 205, 50),        -- Yellow painted guidance seam lines
 
-	-- Sci-Fi Lunar Outpost Architecture (Modular Base, Solar, Tanks)
-	StationWhite = Color3.fromRGB(242, 244, 248),     -- Modular composite habitat panels
-	StationDark = Color3.fromRGB(50, 54, 64),         -- Industrial base trims & foundations
-	AccentOrange = Color3.fromRGB(245, 120, 25),      -- High-visibility safety orange trim
-	AccentTeal = Color3.fromRGB(45, 195, 225),        -- High-tech illuminated glass & monitors
-	MetalPipes = Color3.fromRGB(140, 145, 155),       -- Utility conduits & pipes
-	SolarBlue = Color3.fromRGB(25, 42, 75),           -- Photovoltaic crystalline solar cells
-	AirlockDoor = Color3.fromRGB(70, 75, 88),         -- Pressurized hatch door
+	-- Sci-Fi Lunar Outpost Architecture (Clean White, Teal & Orange accents)
+	StationWhite = Color3.fromRGB(245, 247, 252),     -- Clean white modular booth & base panels
+	StationDark = Color3.fromRGB(55, 60, 72),         -- Foundation trims & bases
+	StationTeal = Color3.fromRGB(36, 170, 190),       -- Teal trim & kiosk highlights
+	StationPurple = Color3.fromRGB(180, 100, 240),     -- Purple-pink screen & trim for Pets
+	AccentOrange = Color3.fromRGB(255, 115, 20),      -- Orange glowing sell pad & warning stripes
+	AccentTeal = Color3.fromRGB(45, 215, 240),        -- Glowing digital screens & lights
+	MetalPipes = Color3.fromRGB(140, 145, 155),       -- Utility conduits & poles
+	SolarBlue = Color3.fromRGB(25, 45, 80),           -- Solar cells
+	AirlockDoor = Color3.fromRGB(75, 80, 95),         -- Reinforced airlock door panels
 
 	-- Character & Space Suits
 	SuitWhite = Color3.fromRGB(245, 245, 250),
@@ -38,7 +40,7 @@ return {
 	SuitBackpack = Color3.fromRGB(160, 165, 175),
 	SuitVisor = Color3.fromRGB(22, 25, 32),           -- Glossy dark helmet visor
 
-	-- Vehicles & Sweeper Bots (Ref: Lunar Sweeper Cart & Truck)
+	-- Vehicles & Sweeper Bots
 	CartBody = Color3.fromRGB(245, 243, 238),        -- Off-white / cream body
 	CartTeal = Color3.fromRGB(38, 70, 82),            -- Dark teal chassis skirt
 	CartOrange = Color3.fromRGB(245, 115, 20),        -- Racing & warning stripes
@@ -48,19 +50,10 @@ return {
 
 	-- Pet Rarity Tiers
 	Rarity = {
-		Common = Color3.fromRGB(180, 185, 195),
-		Rare = Color3.fromRGB(60, 160, 255),
-		Epic = Color3.fromRGB(185, 75, 255),
-		Legendary = Color3.fromRGB(255, 180, 30),
-		Mythic = Color3.fromRGB(255, 55, 95),
+		Common = Color3.fromRGB(149, 165, 166),
+		Rare = Color3.fromRGB(52, 152, 219),
+		Epic = Color3.fromRGB(155, 89, 182),
+		Legendary = Color3.fromRGB(241, 196, 15),
+		Mythic = Color3.fromRGB(231, 76, 60),
 	},
-
-	-- User Interface
-	UiBackground = Color3.fromRGB(28, 32, 42),
-	UiPanel = Color3.fromRGB(38, 44, 58),
-	UiBorder = Color3.fromRGB(65, 75, 95),
-	UiTextPrimary = Color3.fromRGB(255, 255, 255),
-	UiTextMuted = Color3.fromRGB(175, 182, 198),
-	UiSuccess = Color3.fromRGB(75, 215, 130),
-	UiWarning = Color3.fromRGB(255, 170, 40),
 }

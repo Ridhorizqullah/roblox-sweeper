@@ -32,28 +32,28 @@ function Service.Init(): ()
 
 			local billboard = Instance.new("BillboardGui")
 			billboard.Name = "Instructions"
-			billboard.Size = UDim2.fromOffset(240, 56)
+			billboard.Size = UDim2.fromOffset(180, 40)
 			billboard.StudsOffset = Layout.Portal.StudsOffset
-			billboard.MaxDistance = 40
+			billboard.MaxDistance = Layout.Portal.MaxDistance
 			billboard.AlwaysOnTop = true
 			billboard.Adornee = portal
 
 			local label = Instance.new("TextLabel")
 			label.Size = UDim2.fromScale(1, 1)
 			label.BackgroundTransparency = 1
-			label.Text = "PORTAL: " .. definition.name:upper() .. "\n$" .. definition.unlockPrice
+			label.Text = Layout.Portal.ShortTitle
 			label.TextColor3 = Color3.fromRGB(255, 255, 255)
-			label.TextStrokeTransparency = 0.2
+			label.TextStrokeTransparency = 0.15
 			label.TextStrokeColor3 = Color3.fromRGB(20, 25, 35)
-			label.TextSize = 15
-			label.TextWrapped = true
-			label.Font = Enum.Font.GothamBold
+			label.TextSize = 18
+			label.TextWrapped = false
+			label.Font = Enum.Font.GothamBlack
 			label.Parent = billboard
 			billboard.Parent = portal
 
 			local prompt = Instance.new("ProximityPrompt")
-			prompt.ActionText = "Travel / unlock $" .. definition.unlockPrice
-			prompt.ObjectText = definition.name .. " (owned: free)"
+			prompt.ActionText = string.format("Travel to %s ($%d)", definition.name, definition.unlockPrice)
+			prompt.ObjectText = ""
 			prompt.MaxActivationDistance = Layout.Portal.MaxDistance
 			prompt.HoldDuration = Planets.Portal.HoldSeconds
 			prompt.RequiresLineOfSight = false

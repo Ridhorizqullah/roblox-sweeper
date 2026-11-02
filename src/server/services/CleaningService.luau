@@ -75,7 +75,7 @@ end
 local function makePrompt(part: BasePart, action: string, distance: number): ProximityPrompt
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = action
-	prompt.ObjectText = if action == "Sell bag" then "Recycler" else "Moon dust"
+	prompt.ObjectText = ""
 	prompt.MaxActivationDistance = distance
 	prompt.HoldDuration = Cleaning.PromptHoldSeconds
 	prompt.KeyboardKeyCode = Cleaning.PromptKey
@@ -193,10 +193,10 @@ function Service.Init(): ()
 		table.insert(connections, prompt.Triggered:Connect(function(player: Player) clean(player, node) end))
 	end
 	for _, id in Planets.Order do
-	local station = WorldService.GetSellStation(id)
-	local sellPrompt = makePrompt(station, "Sell bag", Economy.SellRadius)
-	table.insert(stationPrompts, sellPrompt)
-	table.insert(connections, sellPrompt.Triggered:Connect(function(player: Player) sell(player, station) end))
+		local station = WorldService.GetSellStation(id)
+		local sellPrompt = makePrompt(station, "Sell bag contents", Economy.SellRadius)
+		table.insert(stationPrompts, sellPrompt)
+		table.insert(connections, sellPrompt.Triggered:Connect(function(player: Player) sell(player, station) end))
 	end
 	table.insert(connections, Players.PlayerRemoving:Connect(function(player: Player) limits[player] = nil end))
 	game:BindToClose(Service.Destroy)

@@ -2,6 +2,20 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
+
+-- Requirement 7: Disable default Roblox backpack to prevent duplicate tool hotbar slots
+task.spawn(function()
+	local tries = 0
+	while tries < 15 do
+		local ok = pcall(function()
+			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+		end)
+		if ok then break end
+		tries += 1
+		task.wait(0.2)
+	end
+end)
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("config")
